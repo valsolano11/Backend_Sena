@@ -8,7 +8,7 @@ export const usuarioSchemas = z.object({
     required_error: "El nombre es requerido",
   }),
   correo: z.string({
-    required_error: "EL coreeo es requerido",
+    required_error: "EL correo es requerido",
   }),
   password: z
     .string({

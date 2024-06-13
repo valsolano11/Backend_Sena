@@ -1,4 +1,4 @@
-import { crearToken } from "../libs/token.js";
+import { crearToken, verificarToken } from "../libs/token.js";
 import Usuario from "../models/Usuario.js";
 import bcrypt from "bcryptjs";
 
@@ -49,3 +49,43 @@ export const logout = async (req,res )  =>{
     res.status(500).json()
   }
 }
+export const perfil = async (req, res) => {
+  try {
+    let accessToken = req.headers["authorization"];
+    if (!accessToken) {
+      return res.status(401).json({
+        message: "No autorizado",
+      });
+    }
+
+    const token = accessToken.split(" ")[1];
+    const data = await verificarToken(token);
+
+    // Utiliza el correo del usuario extraído del token para buscar en la base de datos
+    const consultarUsuario = await Usuario.findOne({
+      where: {
+        Documento: data.usuario.Documento,
+      },
+    });
+
+    if (!consultarUsuario) {
+      return res.status(404).json({
+        message: "Usuario no encontrado",
+      });
+    }
+
+    const userInfo = {
+      ...consultarUsuario.dataValues,
+      id: consultarUsuario.id,
+      username: consultarUsuario.username,
+    };
+
+    res.status(200).json({
+      perfil: userInfo,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};

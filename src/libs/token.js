@@ -22,14 +22,42 @@ export const crearToken = (data, time = "1d") => {
 };
 
 export const verificarToken = (token) => {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     try {
-      jwt.verify(token, secretKey, async (err, decoded) => {
+      jwt.verify(token, process.env.SECRET_KEY, async (err, decoded) => {
         if (err) {
           return reject(err);
         }
+        let Documento = decoded.Documento;
+        const usuario = await Usuario.findOne({
+          where: { Documento },
+        });
 
-        const { Documento } = decoded;
+        if (!usuario) {
+          return reject({ message: "Usuario no encontrado", usuario });
+        }
+
+        resolve({
+          token,
+          usuario: {
+            id: usuario.id,
+            Documento: usuario.Documento,
+          },
+        });
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+/* export const verificarToken = (token) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      jwt.verify(token, process.env.SECRET_KEY, async (err, decoded) => {
+        if (err) {
+          return reject(err);
+        }
+        let Documento = decoded.Documento;
         const usuario = await Usuario.findOne({
           where: { Documento },
         });
@@ -49,5 +77,4 @@ export const verificarToken = (token) => {
       reject(error);
     }
   });
-};
- 
+}; */
