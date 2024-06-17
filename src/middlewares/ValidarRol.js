@@ -1,63 +1,31 @@
-/* import Rol from "../models/Rol.js";
+import Rol from "../models/Rol.js";
 import Usuario from "../models/Usuario.js";
 
-// Middleware para obtener el usuario
-export const obtenerUsuario = async (req, res, next) => {
+export const validarRolAdmin = async (req, res, next) => {
   try {
     const usuario = await Usuario.findOne({
-      where: {
-        Documento: req.usuario.Documento,
+      where: { 
+        Documento: req.usuario.Documento 
       },
       include: {
-        model: Rol,
-        attributes: ["rolName"],
+        include: Rol,
       },
     });
 
     if (!usuario) {
-      return res.status(401).json({
-        message: "No se encontró el usuario",
-      });
+
+      return res.status(401).json({ message: "Usuario no encontrado" });
     }
 
+    if (usuario.Rol.rolName !== "ADMIN") {
+      return res.status(403).json({
+          message: "Acceso denegado. Se requiere rol de administrador.",
+        });
+    }
     req.usuarioInfo = usuario;
-    next();
+    next(); 
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    console.error(error);
+    return res.status(500).json({ message: "Error al validar rol de administrador" });
   }
 };
-
-// Middleware para validar el rol de administrador
-export const validarRolAdmin = (req, res, next) => {
-  try {
-    const { usuarioInfo } = req;
-
-    if (usuarioInfo.Rol && usuarioInfo.Rol.rolName === "ADMIN") {
-      return next();
-    }
-
-    return res.status(401).json({
-      message: "No tienes permiso para acceder a este sitio",
-    });
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
-};
-
-// Middleware para validar el rol de Usuario
-export const validarRolUsuario = (req, res, next) => {
-  try {
-    const { usuarioInfo } = req;
-
-    if (usuarioInfo.Rol && usuarioInfo.Rol.rolName === "USUARIO") {
-      return next();
-    }
-
-    return res.status(401).json({
-      message: "No tienes permiso para acceder a este sitio",
-    });
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
-};
- */

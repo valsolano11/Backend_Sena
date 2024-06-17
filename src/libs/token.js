@@ -50,6 +50,7 @@ export const verificarToken = (token) => {
     }
   });
 };
+
 /* export const verificarToken = (token) => {
   return new Promise(async (resolve, reject) => {
     try {

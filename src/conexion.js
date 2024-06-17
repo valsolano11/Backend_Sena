@@ -6,9 +6,7 @@ config();
 const { DB_HOST, DB_NAME, DB_PASSWORD, DB_USER, DB_PORT, ENV } = process.env;
 
 export const conexion =
-  ENV === "SENA"
-    ? new Sequelize(
-        `postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}`,
+  ENV === "SENA"? new Sequelize(`postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}`,
         {
           dialect: "postgres",
           ssl: true,

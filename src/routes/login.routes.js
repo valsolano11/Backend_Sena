@@ -8,7 +8,7 @@ const LoginRouter = Router();
 
 LoginRouter.post("/login", validarSchemas(loginSchemas), login);
 LoginRouter.post("/logout", logout );
-LoginRouter.get("/perfil", rutaProtegida ,perfil );
+LoginRouter.get("/perfil", rutaProtegida, perfil );
 
 
 export default LoginRouter;

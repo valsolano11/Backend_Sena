@@ -1,4 +1,5 @@
 import { crearToken, verificarToken } from "../libs/token.js";
+import Rol from "../models/Rol.js";
 import Usuario from "../models/Usuario.js";
 import bcrypt from "bcryptjs";
 
@@ -8,6 +9,7 @@ export const login = async (req, res) => {
 
     const usuario = await Usuario.findOne({
       where: { Documento },
+      include: Rol,
     });
 
     if (!usuario) {
@@ -28,6 +30,7 @@ export const login = async (req, res) => {
 
     res.cookie("token", token).status(200).json({
       message: "Inicio de sesión exitoso",
+      role: usuario.Rol.rolName,
       token,
     });
   } catch (error) {
@@ -37,6 +40,7 @@ export const login = async (req, res) => {
     });
   }
 };
+
 export const logout = async (req,res )  =>{
   try {
     res.cookie("token", "", {
@@ -49,6 +53,8 @@ export const logout = async (req,res )  =>{
     res.status(500).json()
   }
 }
+
+
 export const perfil = async (req, res) => {
   try {
     let accessToken = req.headers["authorization"];
@@ -61,7 +67,6 @@ export const perfil = async (req, res) => {
     const token = accessToken.split(" ")[1];
     const data = await verificarToken(token);
 
-    // Utiliza el correo del usuario extraído del token para buscar en la base de datos
     const consultarUsuario = await Usuario.findOne({
       where: {
         Documento: data.usuario.Documento,

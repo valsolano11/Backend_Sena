@@ -1,5 +1,6 @@
 import { verificarToken } from "../libs/token.js";
 
+//Opcion 1
 export const rutaProtegida = async (req, res, next) => {
   try {
     let accessToken = req.headers["authorization"];
@@ -18,6 +19,8 @@ export const rutaProtegida = async (req, res, next) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+// Opcion 2
 
 /* import { verificarToken } from "../libs/token.js";
 
