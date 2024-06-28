@@ -8,24 +8,34 @@ config();
 const { DOCUMENT_ADMIN } = process.env;
 export const crearUsuario = async (req, res) => {
   try {
-    const consulta = await Usuario.findByPk(req.body.id);
-
-    if (consulta) {
-      return res.status(400).json({
-        message: "El id del usuario ya existe",
-      });
+    const consultaId = await Usuario.findByPk(req.body.id);
+    if (consultaId) {
+      return res.status(400).json({ message: "El ID del usuario ya existe" });
     }
 
     const consultaRol = await Rol.findByPk(req.body.RolId);
     if (!consultaRol) {
-      return res.status(400).json({
-        message: "Rol no encontrado",
-      });
+      return res.status(400).json({ message: "Rol no encontrado" });
     }
 
+    const consultaCorreo = await Usuario.findOne({
+      where: { 
+        correo: req.body.correo 
+      },
+    });
+    if (consultaCorreo) {
+      return res.status(400).json({ message: "El correo ya existe" });
+    }
+    const consultaDocumento = await Usuario.findOne({
+      where: { 
+        Documento: req.body.Documento 
+      },
+    });
+    if (consultaDocumento) {
+      return res.status(400).json({ message: "El documento ya existe" });
+    }
     let data = req.body;
-
-    var salt = bcrypt.genSaltSync(10);
+    const salt = bcrypt.genSaltSync(10);
     data.password = bcrypt.hashSync(data.password, salt);
 
     const crearUser = await Usuario.create(data);
@@ -33,9 +43,11 @@ export const crearUsuario = async (req, res) => {
     const guardar = await crearUser.save();
     res.status(201).json(guardar);
   } catch (error) {
+    console.error("Error al crear usuario:", error);
     res.status(500).json({ message: error.message });
   }
 };
+
 export const getAllUsuario = async (req, res) => {
   try {
     const consultarUsuarios = await Usuario.findAll();

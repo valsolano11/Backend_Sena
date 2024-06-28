@@ -3,29 +3,41 @@ import Usuario from "../models/Usuario.js";
 
 export const validarRolAdmin = async (req, res, next) => {
   try {
+    console.log("req.usuario:", req.usuario);
+    if (
+      !req.usuario ||
+      !req.usuario.usuario ||
+      !req.usuario.usuario.Documento
+    ) {
+      return res.status(400).json({
+        message: "Faltan credenciales de usuario",
+      });
+    }
+
     const usuario = await Usuario.findOne({
-      where: { 
-        Documento: req.usuario.Documento 
+      where: {
+        Documento: req.usuario.usuario.Documento,
       },
       include: {
-        include: Rol,
+        model: Rol,
       },
     });
 
     if (!usuario) {
-
-      return res.status(401).json({ message: "Usuario no encontrado" });
+      return res.status(401).json({
+        message: "No se encontró el usuario",
+      });
     }
 
     if (usuario.Rol.rolName !== "ADMIN") {
       return res.status(403).json({
-          message: "Acceso denegado. Se requiere rol de administrador.",
-        });
+        message: "No tienes el rol para hacerlo",
+      });
     }
+
     req.usuarioInfo = usuario;
-    next(); 
+    next();
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Error al validar rol de administrador" });
+    return res.status(500).json({ error: error.message });
   }
 };
