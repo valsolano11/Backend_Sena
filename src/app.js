@@ -5,6 +5,7 @@ import morgan from "morgan";
 import usuariosRouter from "./routes/usuario.routes.js";
 import rolRouter from "./routes/Rol.routes.js";
 import LoginRouter from "./routes/login.routes.js";
+import recuperacionRouter from "./routes/olvidarContrasena.routes.js";
 
 const app = express();
 
@@ -24,7 +25,9 @@ app.get("/", (req, res) => {
 app.use(
     usuariosRouter,
     rolRouter,
-    LoginRouter
+    LoginRouter,
+    recuperacionRouter
+
 )
 
 export default app;

@@ -34,7 +34,7 @@ export const verificarToken = (token) => {
         });
 
         if (!usuario) {
-          return reject({ message: "Usuario no encontrado", usuario });
+          return reject({ message: "Usuario no encontrado" });
         }
 
         resolve({
@@ -51,31 +51,18 @@ export const verificarToken = (token) => {
   });
 };
 
-/* export const verificarToken = (token) => {
-  return new Promise(async (resolve, reject) => {
+export const verificarTokenRecupercion = (token) => {
+  return new Promise((resolve, reject) => {
     try {
-      jwt.verify(token, process.env.SECRET_KEY, async (err, decoded) => {
+      jwt.verify(token, process.env.SECRET_KEYy, async (err, decoded) => {
         if (err) {
           return reject(err);
         }
-        let Documento = decoded.Documento;
-        const usuario = await Usuario.findOne({
-          where: { Documento },
-        });
 
-        if (!usuario) {
-          return reject({ message: "Usuario no encontrado", usuario });
-        }
-
-        resolve({
-          token,
-          usuario: {
-            Documento: usuario.Documento,
-          },
-        });
+        resolve(decoded);
       });
     } catch (error) {
       reject(error);
     }
   });
-}; */
+};
