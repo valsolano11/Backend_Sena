@@ -54,7 +54,7 @@ export const verificarToken = (token) => {
 export const verificarTokenRecupercion = (token) => {
   return new Promise((resolve, reject) => {
     try {
-      jwt.verify(token, process.env.SECRET_KEYy, async (err, decoded) => {
+      jwt.verify(token, secretKey, (err, decoded) => {
         if (err) {
           return reject(err);
         }

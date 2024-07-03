@@ -1,13 +1,13 @@
 // Solamente se recibe correo @outlook
-const emailRegex = /^[a-zA-Z0-9._%+-]+@outlook\.com$/;
+const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 const passwordRegex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*?])[a-zA-Z0-9!@#$%^&*?]{8,}$/;
 
-export const validadPassword = (password) => {
+export const validarPassword = (password) => {
   return passwordRegex.test(password);
 };
-export const validadCorreo = (correo) => {
+export const validarCorreo = (correo) => {
   return emailRegex.test(correo);
 };
 
