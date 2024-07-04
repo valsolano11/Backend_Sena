@@ -4,6 +4,8 @@ import { validarRolAdmin } from "../middlewares/ValidarRol.js";
 import {rutaProtegida} from "../middlewares/ValidarToken.js";
 import { usuarioSchemas } from "../schemas/Usuario.schemas.js";
 import validarSchemas from "../middlewares/ValidarSchemas.js";
+/* import { cambiarEstado } from "../controllers/Estado.controller.js";
+import Usuario from "../models/Usuario.js"; */
 
 const usuariosRouter = Router()
 
@@ -11,7 +13,7 @@ const usuariosRouter = Router()
 usuariosRouter.get("/usuarios", rutaProtegida , validarRolAdmin, getAllUsuario);
 usuariosRouter.get("/usuarios/:id", rutaProtegida, validarRolAdmin, getUsuario);
 usuariosRouter.post("/usuarios", rutaProtegida, validarSchemas(usuarioSchemas), validarRolAdmin, crearUsuario);
-usuariosRouter.put("/usuarios/:id", rutaProtegida, putUsuario);
+usuariosRouter.put("/usuarios/:id", rutaProtegida,/*  cambiarEstado(Usuario), */ putUsuario);
 usuariosRouter.delete('/usuarios/:id', rutaProtegida, validarRolAdmin,  deleteUsuario)
 
 export default usuariosRouter

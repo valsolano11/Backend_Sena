@@ -1,6 +1,7 @@
 import { DataTypes } from "sequelize";
 import { conexion } from "../conexion.js";
 import Rol from "./Rol.js";
+import Estado from "./Estados.js";
 import { config } from "dotenv";
 import bcrypt from "bcryptjs";
 
@@ -37,10 +38,9 @@ const Usuario = conexion.define(
     tableName: "Usuarios",
     timestamps: true,
   }
-);
+);Usuario.belongsTo(Estado, { foreignKey: "EstadoId" });
+Usuario.belongsTo(Rol, { foreignKey: "RolId" });
 
-Rol.hasMany(Usuario, { foreignKey: "RolId" });
-Usuario.belongsTo(Rol);
 
 //encriptacion de contraseñas
 var salt = bcrypt.genSaltSync(10);
@@ -52,6 +52,7 @@ const master = {
   correo: "valsolano1111@soy.sena.edu.co",
   password: hashPass,
   RolId: 1,
+  EstadoId: 1,
   updatedAt: "2024-02-03T03:17:30.386Z",
   createdAt: "2024-02-03T03:17:30.386Z",
 };

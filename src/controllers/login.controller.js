@@ -1,4 +1,5 @@
 import { crearToken, verificarToken } from "../libs/token.js";
+import Estado from "../models/Estados.js";
 import Rol from "../models/Rol.js";
 import Usuario from "../models/Usuario.js";
 import bcrypt from "bcryptjs";
@@ -9,12 +10,20 @@ export const login = async (req, res) => {
 
     const usuario = await Usuario.findOne({
       where: { Documento },
-      include: Rol,
+      include: [
+        { model: Rol }, 
+        { model: Estado }
+      ],
     });
 
     if (!usuario) {
       return res.status(404).json({
         message: "Credenciales inválidas",
+      });
+    }
+    if (usuario.Estado.estadoName !== "ACTIVO") {
+      return res.status(400).json({
+        message: "Estado no activo",
       });
     }
 
