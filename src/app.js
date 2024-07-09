@@ -10,10 +10,17 @@ import EstadoRouter from "./routes/Estado.routes.js";
 
 const app = express();
 
+// Una opcion para evitar errores en el frontend jejeje
+app.use(
+  cors({
+    origin: "http://localhost:5173", 
+    credentials: true,
+  })
+);
 app.use(cookieParser());
 app.use(morgan("dev"));
 app.use(express.json());
-app.use(cors());
+
 
 app.use(express.urlencoded({ extended: true }));
 

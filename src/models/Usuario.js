@@ -10,7 +10,6 @@ config();
 const Usuario = conexion.define(
   "Usuario",
   {
-    // Insertar el ID desde el formulario
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -38,7 +37,10 @@ const Usuario = conexion.define(
     tableName: "Usuarios",
     timestamps: true,
   }
-);Usuario.belongsTo(Estado, { foreignKey: "EstadoId" });
+);
+// Relacion de los roles y el estado 
+
+Usuario.belongsTo(Estado, { foreignKey: "EstadoId" });
 Usuario.belongsTo(Rol, { foreignKey: "RolId" });
 
 

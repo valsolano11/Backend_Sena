@@ -7,6 +7,7 @@ import { config } from "dotenv";
 config();
 
 const { DOCUMENT_ADMIN } = process.env;
+
 export const crearUsuario = async (req, res) => {
   try {
     const consultaId = await Usuario.findByPk(req.body.id);
@@ -34,6 +35,19 @@ export const crearUsuario = async (req, res) => {
     });
     if (consultaDocumento) {
       return res.status(400).json({ message: "El documento ya existe" });
+    }
+
+    /* Aqui se hace una consulta de que el usuario si tenga un estado y sino lo tiene que le asigne uno*/
+    const consultarEstado = await Estado.findAll({
+      where:{
+        id: req.body.id
+      }
+    })
+
+    if(consultarEstado){
+      return res.status(400).json({
+        message: "El estado es requerido, por favor elija uno"
+      })
     }
     
     let data = req.body;
