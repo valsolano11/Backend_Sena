@@ -91,7 +91,7 @@ export const postValidarCodigo = async (req, res) => {
 
     res
       .cookie("cambiopass", generateCookie, {
-        httpOnly: true, // 1 hora en milisegundos
+        expiresIn: "1h",
       })
       .status(200)
       .json({
