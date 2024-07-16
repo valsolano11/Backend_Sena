@@ -15,9 +15,7 @@ const ValidarEstadoGeneral = (Model) => async (req, res, next) => {
       });
 
       if (!usuario) {
-        return res
-          .status(404)
-          .json({
+        return res.status(404).json({
             message: `No se encontró un usuario con el documento: ${Documento}`,
           });
       }
@@ -33,9 +31,7 @@ const ValidarEstadoGeneral = (Model) => async (req, res, next) => {
       next();
     } catch (error) {
       console.error(`Error al verificar el estado de ${Model.name}:`, error);
-      res
-        .status(500)
-        .json({
+     return res.status(500).json({
           message: `Error al verificar el estado del usuario: ${error.message}`,
         });
     }

@@ -4,9 +4,11 @@ import Usuario from "../models/Usuario.js";
 
 export const crearFicha = async (req, res) => {
   try {
-    const { id, UsuarioId, EstadoId, NumeroFicha } = req.body;
+    const { UsuarioId, EstadoId, NumeroFicha } = req.body;
 
-    const consultaId = await Ficha.findByPk(id);
+    const consultaId = await Ficha.findOne({ 
+      where: {NumeroFicha}
+    });
     if (consultaId) {
       return res.status(400).json({ message: "La ficha con ese id ya existe" });
     }
@@ -65,7 +67,7 @@ export const updateFicha = async (req, res) => {
       return res.status(404).json({ message: "Ficha no encontrada" });
     }
 
-    if (UsuarioId) {
+    if (!UsuarioId) {
       const consultaUsuario = await Usuario.findByPk(UsuarioId);
       if (!consultaUsuario) {
         return res.status(400).json({ message: "Usuario no encontrado" });

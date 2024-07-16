@@ -1,6 +1,8 @@
 import Instructor from "../models/Instructores.js";
 import Estado from "../models/Estados.js";
 import Usuario from "../models/Usuario.js";
+import { Op } from "sequelize";
+
 
 export const crearInstructor = async (req, res) => {
   try {
@@ -62,35 +64,36 @@ export const actualizarInstructor = async (req, res) => {
     const { nombre, correo, EstadoId, UsuarioId } = req.body;
 
     const instructor = await Instructor.findByPk(id);
+
     if (!instructor) {
-      return res.status(404).json({ message: "Instructor no encontrado" });
+      return res.status(404).json({ message: "No se encontró el instructor" });
+    }
+    if (correo) {
+      const consultaCorreo = await Instructor.findOne({
+        where: { correo, id: { [Op.ne]: id } },
+      });
+      if (consultaCorreo) {
+        return res.status(400).json({ message: "El instructor con ese correo ya existe" });
+      }
+    }
+    if (UsuarioId) {
+      const consultaUsuario = await Usuario.findByPk(UsuarioId);
+      if (!consultaUsuario) {
+        return res.status(400).json({ message: "Usuario no encontrado" });
+      }
     }
 
-    const consultaCorreo = await Instructor.findOne({
-      where: { correo, id: { [Op.ne]: id } },
-    });
-    if (consultaCorreo) {
-      return res
-        .status(400)
-        .json({ message: "El instructor con ese correo ya existe" });
+    if (EstadoId) {
+      const consultaEstado = await Estado.findByPk(EstadoId);
+      if (!consultaEstado) {
+        return res.status(400).json({ message: "El estado especificado no existe" });
+      }
     }
 
-    const consultaUsuario = await Usuario.findByPk(UsuarioId);
-    if (!consultaUsuario) {
-      return res.status(400).json({ message: "Usuario no encontrado" });
-    }
-
-    const consultaEstado = await Estado.findByPk(EstadoId);
-    if (!consultaEstado) {
-      return res
-        .status(400)
-        .json({ message: "El estado especificado no existe" });
-    }
-
-    instructor.nombre = nombre;
-    instructor.correo = correo;
-    instructor.EstadoId = EstadoId;
-    instructor.UsuarioId = UsuarioId;
+    if (nombre) instructor.nombre = nombre;
+    if (correo) instructor.correo = correo;
+    if (EstadoId) instructor.EstadoId = EstadoId;
+    if (UsuarioId) instructor.UsuarioId = UsuarioId;
 
     await instructor.save();
 

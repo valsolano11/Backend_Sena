@@ -3,7 +3,7 @@ import Rol from "../models/Rol.js";
 export const crearRol = async (req, res) => {
   try {
     const consulta = await Rol.findOne({
-      where: { id: req.body.id },
+      where: { rolName: req.body.rolName },
     });
 
     if (consulta) {
@@ -46,6 +46,29 @@ export const getRol = async (req, res) => {
   }
 };
 
+export const putRoles = async (req, res) => {
+  try {
+    const RolActualizado = await Rol.findByPk(req.params.id);
+
+    if (!RolActualizado) {
+      return res.status(404).json({
+        message: "Rol no encontrado",
+      });
+    }
+
+    await RolActualizado.update(req.body); 
+
+    res.status(200).json({
+      message: "Rol actualizado correctamente",
+      rol: RolActualizado,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error al actualizar el rol",
+      error: error.message,
+    });
+  }
+};
 /* 
 export const getRol = async (req, res) => {
   try {

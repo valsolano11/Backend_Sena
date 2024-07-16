@@ -78,48 +78,49 @@ export const getUsuario = async (req, res) => {
 };
 
 export const putUsuario = async (req, res) => {
-  try {
-    const consultarUsuarios = await Usuario.findByPk(req.params.id);
+  const { nombre, correo, Documento, RolId, EstadoId, password } = req.body;
+  const adminPrincipalDocumento = process.env.DOCUMENT_ADMIN; // Obtener el documento del administrador principal desde las variables de entorno
 
-    if (!consultarUsuarios) {
+  try {
+    const usuarioActualizado = await Usuario.findByPk(req.params.id);
+
+    if (!usuarioActualizado) {
       return res.status(404).json({
         message: "Usuario no encontrado",
       });
     }
 
-    if (req.body.id === DOCUMENT_ADMIN) {
-      delete data.id;
-    }
-    
-    if (req.params.id === DOCUMENT_ADMIN && req.body.RolId === 2) {
-      delete data.RolId;
-    }
-    if (req.body.RolId) {
-      const consultaRol = await Rol.findByPk(req.body.RolId);
-      if (!consultaRol) {
-        return res.status(400).json({
-          message: "Rol no encontrado",
-        });
-      }
+    if (Documento === adminPrincipalDocumento && EstadoId !== undefined) {
+      return res.status(400).json({
+        message:
+          "No tienes permitido cambiar el estado del administrador principal",
+      });
     }
 
-    let data = req.body;
-    if (data.password) {
+    let data = { nombre, correo, Documento, RolId };
+    if (password) {
       var salt = bcrypt.genSaltSync(10);
-      data.password = bcrypt.hashSync(data.password, salt);
+      data.password = bcrypt.hashSync(password, salt);
     }
 
-    await consultarUsuarios.update(data);
+    if (EstadoId !== undefined && Documento !== adminPrincipalDocumento) {
+      data.EstadoId = EstadoId;
+    }
+
+    await usuarioActualizado.update(data);
 
     res.status(200).json({
       ok: true,
       message: "Usuario actualizado",
     });
   } catch (error) {
-    res.status(500).json(error.message);
+    res.status(500).json({ message: error.message });
   }
 };
 
+
+
+/* 
 export const deleteUsuario = async (req, res) => {
   try {
     const consultarUsuarios = await Usuario.findByPk(req.params.id);
@@ -145,3 +146,4 @@ export const deleteUsuario = async (req, res) => {
     res.status(500).json(error.message);
   }
 };
+ */
