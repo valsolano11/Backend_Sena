@@ -25,28 +25,25 @@ const Estado = conexion.define(
     timestamps: true,
   }
 );
-
-const insertarEstados = async (datos) => {
-    try{
-        await Estado.sync();
-        const respuesta = await Estado.findAll();
-
-        if(respuesta.length === 0){
-            await Estado.bulkCreate(datos);
-            /* console.log("Estados insertados correctamente"); */
-        }
-    }catch(error){
-        throw new Error(error.message);
-    }
-};
-
 // Datos predefinidos para los estados
 const datosEstados = [
         { estadoName: "ACTIVO" },
         { estadoName: "INACTIVO" }
     ];
 
-  // Insertar los estados al inicio si la tabla está vacía
-insertarEstados(datosEstados);
+const guardarEstados = async () => {
+  try {
+    await Estado.sync();
+    const estados = await Estado.findAll();
+    if (estados.length === 0) {
+      await Estado.bulkCreate(datosEstados);
+    }
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+setTimeout(() => {
+  guardarEstados();
+}, 2500);
 
 export default Estado;

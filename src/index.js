@@ -1,3 +1,4 @@
+//ESTO NO DEBE TOCARSE, YA ESTA FUNCIONAL
 import app from "./app.js";
 import { config } from "dotenv";
 import "./conexion.js";

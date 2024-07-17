@@ -12,8 +12,6 @@ rolRouter.get("/roles/:id",getRol);
 rolRouter.post("/roles/",rutaProtegida,validarSchemas(rolSchemas), validarRolAdmin, crearRol);
 rolRouter.put("/roles/:id", rutaProtegida, putRoles)
 
-//No se pueden eliminar los roles 
-/* rolRouter.delete("/roles/:id", rutaProtegida, validarRolAdmin, deleteRol); */
 
 
 export default rolRouter;

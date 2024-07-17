@@ -1,6 +1,5 @@
 import Estado from "../models/Estados.js";
-/* import Usuario from "../models/Usuario.js";
- */
+
 const ValidarEstadoGeneral = (Model) => async (req, res, next) => {
     try {
       const { Documento } = req.body;

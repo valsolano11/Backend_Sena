@@ -1,6 +1,5 @@
 import Usuario from "../models/Usuario.js"
 import Rol from "../models/Rol.js";
-import { Op } from "sequelize";
 import bcrypt from 'bcryptjs';
 import { validadCorreo, validadPassword } from "../helpers/OlvidarContrasena.helpers.js";
 
@@ -94,32 +93,6 @@ export const putUsuarioService = (idUser) => {
         resolve({
           ok: true,
           messge: "usuario actualizado",
-          data: usuario,
-        });
-      } catch (error) {
-        reject(error);
-      }
-    });
-  };
-  
-
-
-
-export const deleteUsuarioService = (idUser) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const usuario = await Usuario.findByPk(idUser);
-        if (!usuario) {
-          return resolve({
-            ok: false,
-            message: "usuario no encontrado",
-          });
-        }
-        await usuario.destroy();
-
-        resolve({
-          ok: true,
-          messge: "usuario eliminado",
           data: usuario,
         });
       } catch (error) {

@@ -1,3 +1,6 @@
+//ESTO NO SE DEBE CAMBIAR, LO UNICO QUE SE DEBE CAMBIAR ES LA PALABRA SENA EN DADo CASO QUE
+// TENGA DISTINTO LO DE LAS VARIABLES DE ENTORNO
+
 import { config } from "dotenv";
 import { Sequelize } from "sequelize";
 

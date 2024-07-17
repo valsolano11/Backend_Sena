@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const usuarioSchemas = z.object({
+  
   Documento: z.string({
     required_error: "El documento es requerido",
   }),

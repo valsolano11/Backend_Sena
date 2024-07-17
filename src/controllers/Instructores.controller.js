@@ -1,6 +1,7 @@
 import Instructor from "../models/Instructores.js";
 import Estado from "../models/Estados.js";
 import Usuario from "../models/Usuario.js";
+import { Op } from "sequelize";
 /* import { verificarToken } from "../libs/token.js";
  */
 export const crearInstructor = async (req, res) => {
@@ -9,9 +10,7 @@ export const crearInstructor = async (req, res) => {
 
     const consultaCorreo = await Instructor.findOne({ where: { correo } });
     if (consultaCorreo) {
-      return res
-        .status(400)
-        .json({ message: "El instructor con ese correo ya existe" });
+      return res.status(400).json({ message: "El instructor con ese correo ya existe" });
     }
 
     const consultaUsuario = await Usuario.findByPk(UsuarioId);
@@ -75,9 +74,7 @@ export const actualizarInstructor = async (req, res) => {
         where: { correo, id: { [Op.ne]: id } },
       });
       if (consultaCorreo) {
-        return res
-          .status(400)
-          .json({ message: "El instructor con ese correo ya existe" });
+        return res.status(400).json({ message: "El instructor con ese correo ya existe" });
       }
     }
     if (UsuarioId) {
@@ -90,9 +87,7 @@ export const actualizarInstructor = async (req, res) => {
     if (EstadoId) {
       const consultaEstado = await Estado.findByPk(EstadoId);
       if (!consultaEstado) {
-        return res
-          .status(400)
-          .json({ message: "El estado especificado no existe" });
+        return res.status(400).json({ message: "El estado especificado no existe" });
       }
     }
 

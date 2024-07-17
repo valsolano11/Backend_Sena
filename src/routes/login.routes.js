@@ -3,13 +3,12 @@ import { login, logout, perfil } from "../controllers/login.controller.js";
 import validarSchemas from "../middlewares/ValidarSchemas.js"
 import { loginSchemas } from "../schemas/Login.schemas.js";
 import { rutaProtegida } from "../middlewares/ValidarToken.js";
-/* import ValidarEstadoGeneral from "../middlewares/ValidacionEstadoGeneral.js";
-import Estado from "../models/Estados.js"; */
+
 
 const LoginRouter = Router();
 
 
-LoginRouter.post("/login", /* ValidarEstadoGeneral(Estado), */ validarSchemas(loginSchemas), login);
+LoginRouter.post("/login", validarSchemas(loginSchemas), login);
 LoginRouter.post("/logout", logout );
 LoginRouter.get("/perfil", rutaProtegida, perfil );
 

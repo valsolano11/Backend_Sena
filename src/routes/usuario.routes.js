@@ -13,7 +13,6 @@ usuariosRouter.get("/usuarios", rutaProtegida , validarRolAdmin, getAllUsuario);
 usuariosRouter.get("/usuarios/:id", rutaProtegida, validarRolAdmin, getUsuario);
 usuariosRouter.post("/usuarios", rutaProtegida, validarSchemas(usuarioSchemas), validarRolAdmin, crearUsuario);
 usuariosRouter.put("/usuarios/:id", rutaProtegida, putUsuario);
-// Debido a que se requiere un historial de los usuarios no se pueden eliminar 
-/* usuariosRouter.delete('/usuarios/:id', rutaProtegida, validarRolAdmin,  deleteUsuario)
- */
+
+
 export default usuariosRouter
