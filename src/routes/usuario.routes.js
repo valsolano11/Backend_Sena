@@ -9,7 +9,7 @@ import validarSchemas from "../middlewares/ValidarSchemas.js";
 const usuariosRouter = Router()
 
 
-usuariosRouter.get("/usuarios", rutaProtegida , validarRolAdmin, getAllUsuario);
+usuariosRouter.get("/usuarios", rutaProtegida, validarRolAdmin, getAllUsuario);
 usuariosRouter.get("/usuarios/:id", rutaProtegida, validarRolAdmin, getUsuario);
 usuariosRouter.post("/usuarios", rutaProtegida, validarSchemas(usuarioSchemas), validarRolAdmin, crearUsuario);
 usuariosRouter.put("/usuarios/:id", rutaProtegida, putUsuario);

@@ -8,7 +8,7 @@ import { rutaProtegida } from "../middlewares/ValidarToken.js";
 const LoginRouter = Router();
 
 
-LoginRouter.post("/login", validarSchemas(loginSchemas), login);
+LoginRouter.post("/login", validarSchemas(loginSchemas),login);
 LoginRouter.post("/logout", logout );
 LoginRouter.get("/perfil", rutaProtegida, perfil );
 

@@ -1,42 +1,32 @@
-import Rol from "../models/Rol.js";
+import Rol from "../models/rol.js";
 import Usuario from "../models/Usuario.js";
+import Estado from "../models/Estados.js"
 
 export const validarRolAdmin = async (req, res, next) => {
   try {
-    console.log("req.usuario:", req.usuario);
-    if (
-      !req.usuario ||
-      !req.usuario.usuario ||
-      !req.usuario.usuario.Documento
-    ) {
-      return res.status(400).json({
-        message: "Faltan credenciales de usuario",
-      });
-    }
-
-    const usuario = await Usuario.findOne({
+    const consultarRol = await Usuario.findOne({
       where: {
         Documento: req.usuario.usuario.Documento,
       },
       include: {
         model: Rol,
+        model: Estado
       },
     });
 
-    if (!usuario) {
+    if (!consultarRol) {
       return res.status(401).json({
-        message: "No se encontró el usuario",
+        message: "No se encontro el usuario",
       });
     }
 
-    if (usuario.Rol.rolName !== "ADMIN") {
-      return res.status(403).json({
-        message: "No tienes el rol para hacerlo",
-      });
+    if (consultarRol.Rol.rolName === "ADMIN") {
+      return next();
     }
 
-    req.usuarioInfo = usuario;
-    next();
+    return res.status(401).json({
+      message: "No tienes el rol para hacerlo",
+    });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
