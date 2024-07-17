@@ -9,9 +9,8 @@ const rolRouter = Router();
 
 rolRouter.get("/roles", getAllRol);
 rolRouter.get("/roles/:id",getRol);
-rolRouter.post("/roles/",rutaProtegida,validarSchemas(rolSchemas), validarRolAdmin, crearRol);
+rolRouter.post("/roles/",rutaProtegida, validarSchemas(rolSchemas), validarRolAdmin, crearRol);
 rolRouter.put("/roles/:id", rutaProtegida, putRoles)
-
 
 
 export default rolRouter;

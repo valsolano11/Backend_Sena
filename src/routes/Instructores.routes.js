@@ -1,3 +1,5 @@
+//Proceso de prueba.
+
 import { Router } from "express";
 import validarSchemas from "../middlewares/ValidarSchemas.js";
 import { InstructoresSchemas } from "../schemas/Instructores.schemas.js"; 

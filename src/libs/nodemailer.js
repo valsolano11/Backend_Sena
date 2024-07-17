@@ -1,3 +1,5 @@
+//NO TOCAR ESTO
+
 import nodemailer from "nodemailer";
 // Parte de codigo donde se envia lo del correo
 export const enviarCorreo = (text, email, subject = "Sistema Inventario Mobiliario SENA") =>{

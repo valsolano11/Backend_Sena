@@ -1,5 +1,4 @@
 import { verificarToken } from "../libs/token.js";
-import Usuario from "../models/Usuario.js";
 
 //Opcion 1
 export const rutaProtegida = async (req, res, next) => {

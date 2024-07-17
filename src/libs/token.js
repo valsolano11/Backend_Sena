@@ -1,3 +1,4 @@
+//NO TOCAR ESTO.
 import jwt from "jsonwebtoken";
 import { config } from "dotenv";
 import Usuario from "../models/Usuario.js";
@@ -52,6 +53,7 @@ export const verificarToken = (token) => {
   });
 };
 
+//Esto es lo de olvidar contraseña
 export const verificarTokenRecupercion = (token) => {
   return new Promise((resolve, reject) => {
     try {

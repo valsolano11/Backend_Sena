@@ -1,5 +1,4 @@
 import Usuario from "../models/Usuario.js";
-import Estado from "../models/Estados.js"
 import Rol from "../models/Rol.js";
 import bcrypt from "bcryptjs";
 import { config } from "dotenv";

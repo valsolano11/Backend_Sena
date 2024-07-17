@@ -1,3 +1,4 @@
+// Esto ya esta funcional, no tocarlo.
 import { Router } from 'express'
 import {postCrearCodigo, postValidarCodigo, updatePassword,} from "../controllers/OlvidarContrasena.controller.js";
  
