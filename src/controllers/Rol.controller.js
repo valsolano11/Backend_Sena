@@ -56,7 +56,7 @@ export const putRoles = async (req, res) => {
       });
     }
 
-    await RolActualizado.update(req.body); 
+    await RolActualizado.update(req.body);
 
     res.status(200).json({
       message: "Rol actualizado correctamente",
@@ -69,6 +69,7 @@ export const putRoles = async (req, res) => {
     });
   }
 };
+
 /* 
 export const getRol = async (req, res) => {
   try {

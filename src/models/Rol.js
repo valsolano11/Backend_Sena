@@ -14,6 +14,11 @@ const Rol = conexion.define(
     rolName: {
       type: DataTypes.STRING,
       allowNull: false,
+      validate:{
+        notEmpty:{
+          msg: "El valor no puede estar vacio"
+        }
+      }
     },
   },
   {

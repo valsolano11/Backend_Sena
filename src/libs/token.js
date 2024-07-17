@@ -42,6 +42,7 @@ export const verificarToken = (token) => {
           usuario: {
             id: usuario.id,
             Documento: usuario.Documento,
+            RolId: usuario.RolId,
           },
         });
       });
@@ -66,3 +67,4 @@ export const verificarTokenRecupercion = (token) => {
     }
   });
 };
+

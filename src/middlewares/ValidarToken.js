@@ -1,4 +1,5 @@
 import { verificarToken } from "../libs/token.js";
+import Usuario from "../models/Usuario.js";
 
 //Opcion 1
 export const rutaProtegida = async (req, res, next) => {
@@ -19,6 +20,9 @@ export const rutaProtegida = async (req, res, next) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+
+
 
 // Opcion 2
 

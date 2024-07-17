@@ -2,24 +2,29 @@ import { DataTypes } from "sequelize";
 import { conexion } from "../conexion.js";
 
 const Estado = conexion.define(
-    "Estado",
-    {
-        id: {
-            type: DataTypes.INTEGER,
-            primaryKey: true,
-            autoIncrement: true,
-            allwNull: false,
-        },
-        estadoName:{
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
+  "Estado",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      allowNull: false,
     },
-    {
-        tableName: "Estados",
-        timestamps: true,
-    }
-)
+    estadoName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: "No puedes dejar este campo vacio",
+        },
+      },
+    },
+  },
+  {
+    tableName: "Estados",
+    timestamps: true,
+  }
+);
 
 const insertarEstados = async (datos) => {
     try{

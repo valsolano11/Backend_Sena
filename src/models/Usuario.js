@@ -16,21 +16,41 @@ const Usuario = conexion.define(
       autoIncrement: true,
       allowNull: false,
     },
-    Documento:{
-        type: DataTypes.STRING,
-        allowNull: false,
+    Documento: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: "No puedes dejar este campo vacio",
+        },
+      },
     },
     nombre: {
       type: DataTypes.STRING,
       allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: "No puedes dejar este campo vacio",
+        },
+      },
     },
     correo: {
       type: DataTypes.STRING,
       allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: "No puedes dejar este campo vacio",
+        },
+      },
     },
     password: {
       type: DataTypes.STRING,
       allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: "No puedes dejar este campo vacio",
+        },
+      },
     },
   },
   {

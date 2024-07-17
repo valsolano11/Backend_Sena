@@ -15,17 +15,10 @@ const Fichas = conexion.define(
     NumeroFicha: {
       type: DataTypes.STRING,
       allowNull: false,
-    },
-    EstadoId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    UsuarioId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "Usuarios",
-        key: "id",
+      validate: {
+        notEmpty: {
+          msg: "No puedes dejar este campo vacio",
+        },
       },
     },
   },

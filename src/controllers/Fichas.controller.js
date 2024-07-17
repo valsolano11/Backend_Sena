@@ -10,7 +10,7 @@ export const crearFicha = async (req, res) => {
       where: {NumeroFicha}
     });
     if (consultaId) {
-      return res.status(400).json({ message: "La ficha con ese id ya existe" });
+      return res.status(400).json({ message: "La ficha ya existe" });
     }
 
     const consultaUsuario = await Usuario.findByPk(UsuarioId);
@@ -62,6 +62,14 @@ export const updateFicha = async (req, res) => {
   try {
     const { UsuarioId, EstadoId, NumeroFicha } = req.body;
 
+    const consultaId = await Ficha.findOne({ 
+      where: {
+        NumeroFicha
+      }
+    });
+    if (consultaId) {
+      return res.status(400).json({ message: "La ficha ya existe" });
+    }
     const ficha = await Ficha.findByPk(req.params.id);
     if (!ficha) {
       return res.status(404).json({ message: "Ficha no encontrada" });
@@ -78,9 +86,7 @@ export const updateFicha = async (req, res) => {
     if (EstadoId) {
       const consultaEstado = await Estado.findByPk(EstadoId);
       if (!consultaEstado) {
-        return res
-          .status(400)
-          .json({ message: "El estado especificado no existe" });
+        return res.status(400).json({ message: "El estado especificado no existe" });
       }
       ficha.EstadoId = EstadoId;
     }
