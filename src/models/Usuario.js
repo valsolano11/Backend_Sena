@@ -19,6 +19,7 @@ const Usuario = conexion.define(
     Documento: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
       validate: {
         notEmpty: {
           msg: "No puedes dejar este campo vacio",
@@ -28,6 +29,7 @@ const Usuario = conexion.define(
     nombre: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
       validate: {
         notEmpty: {
           msg: "No puedes dejar este campo vacio",
@@ -37,6 +39,7 @@ const Usuario = conexion.define(
     correo: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
       validate: {
         notEmpty: {
           msg: "No puedes dejar este campo vacio",
@@ -46,6 +49,7 @@ const Usuario = conexion.define(
     password: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
       validate: {
         notEmpty: {
           msg: "No puedes dejar este campo vacio",
@@ -56,6 +60,18 @@ const Usuario = conexion.define(
   {
     tableName: "Usuarios",
     timestamps: true,
+    indexes: [
+      {
+        fields: [
+          "Documento",
+          "nombre",
+          "correo",
+          "password",
+          "EstadoId",
+          "RolId",
+        ],
+      },
+    ],
   }
 );
 // Relacion de los roles y el estado 

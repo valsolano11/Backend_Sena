@@ -13,6 +13,7 @@ const Estado = conexion.define(
     estadoName: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
       validate: {
         notEmpty: {
           msg: "No puedes dejar este campo vacio",
@@ -23,6 +24,12 @@ const Estado = conexion.define(
   {
     tableName: "Estados",
     timestamps: true,
+    indexes: [
+      {
+        unique: true,
+        fields: ["estadoName"],
+      },
+    ],
   }
 );
 // Datos predefinidos para los estados

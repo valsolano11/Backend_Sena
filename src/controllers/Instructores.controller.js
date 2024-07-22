@@ -2,8 +2,8 @@ import Instructor from "../models/Instructores.js";
 import Estado from "../models/Estados.js";
 import Usuario from "../models/Usuario.js";
 import { Op } from "sequelize";
-/* import { verificarToken } from "../libs/token.js";
- */
+
+
 export const crearInstructor = async (req, res) => {
   try {
     const { nombre, correo, EstadoId, UsuarioId } = req.body;

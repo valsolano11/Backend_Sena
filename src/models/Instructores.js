@@ -3,6 +3,7 @@ import { conexion } from "../conexion.js";
 import Estado from "./Estados.js";
 import Usuario from "./Usuario.js";
 
+
 const Instructores = conexion.define(
   "Instructores",
   {

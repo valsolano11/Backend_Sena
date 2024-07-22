@@ -14,16 +14,23 @@ const Rol = conexion.define(
     rolName: {
       type: DataTypes.STRING,
       allowNull: false,
-      validate:{
-        notEmpty:{
-          msg: "El valor no puede estar vacio"
-        }
-      }
+      unique: true,
+      validate: {
+        notEmpty: {
+          msg: "El valor no puede estar vacio",
+        },
+      },
     },
   },
   {
     tableName: "Roles",
     timestamps: false,
+    indexes: [
+      {
+        unique: true,
+        fields: ["rolName"],
+      },
+    ],
   }
 );
 

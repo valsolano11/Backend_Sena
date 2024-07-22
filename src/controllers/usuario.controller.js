@@ -77,72 +77,69 @@ export const getUsuario = async (req, res) => {
 };
 
 export const putUsuario = async (req, res) => {
-  const { nombre, correo, Documento, RolId, EstadoId, password } = req.body;
-  const adminPrincipalDocumento = process.env.DOCUMENT_ADMIN; // Obtener el documento del administrador principal desde las variables de entorno
-
   try {
-    const usuarioActualizado = await Usuario.findByPk(req.params.id);
-
-    if (!usuarioActualizado) {
+    const consultaUsuario = await Usuario.findByPk(req.params.id);
+    if (!consultaUsuario) {
       return res.status(404).json({
         message: "Usuario no encontrado",
       });
     }
+    let data = req.body;
 
-    if (Documento === adminPrincipalDocumento && EstadoId !== undefined) {
-      return res.status(400).json({
-        message:
-          "No tienes permitido cambiar el estado del administrador principal",
+    if (data.correo) {
+      const consultarcorreo = await Usuario.findOne({
+        where: {
+          correo: req.body.correo,
+        },
       });
+      if (consultarcorreo && consultarcorreo.id !== req.params.id) {
+        return res.status(404).json({
+          message: "Correo utilizado por otro usuario",
+        });
+      }
+    }
+    if (data.Documento) {
+      const consultaDocumento = await Usuario.findOne({
+        where: {
+          Documento: req.body.Documento,
+        },
+      });
+      if (consultaDocumento && consultaDocumento.id !== req.params.id) {
+        return res.status(404).json({
+          message: "El documento ya está en uso por otro usuario",
+        });
+      }
+    }
+    if (req.body.Documento === DOCUMENT_ADMIN) {
+      delete data.id;
+    }
+    if (req.params.id === DOCUMENT_ADMIN && req.body.RolId === 2) {
+      delete data.RolId;
+    }
+    if (req.params.id === DOCUMENT_ADMIN && data.EstadoId) {
+      delete data.EstadoId;
     }
 
-    let data = { nombre, correo, Documento, RolId };
-    if (password) {
-      var salt = bcrypt.genSaltSync(10);
-      data.password = bcrypt.hashSync(password, salt);
+    if (req.body.RolId) {
+      const consultaRol = await Rol.findByPk(req.body.RolId);
+      if (!consultaRol) {
+        return res.status(404).json({
+          message: "Rol no encontrado",
+        });
+      }
     }
-
-    if (EstadoId !== undefined && Documento !== adminPrincipalDocumento) {
-      data.EstadoId = EstadoId;
+    if (data.password) {
+      const salt = bcrypt.genSaltSync(10);
+      data.password = bcrypt.hashSync(data.password, salt);
     }
-
-    await usuarioActualizado.update(data);
+    await consultaUsuario.update(data);
 
     res.status(200).json({
       ok: true,
       message: "Usuario actualizado",
     });
   } catch (error) {
+    console.error("Error al editar usuario:", error);
     res.status(500).json({ message: error.message });
   }
 };
-
-
-
-/* 
-export const deleteUsuario = async (req, res) => {
-  try {
-    const consultarUsuarios = await Usuario.findByPk(req.params.id);
-
-    if (!consultarUsuarios) {
-      return res.status(404).json({
-        message: "Usuario no encontrado",
-      });
-    }
-
-    if (req.params.id === process.env.DOCUMENT_ADMIN) {
-      return res.status(404).json({
-        message: "Usuario admin no se puede borrar",
-      });
-    }
-
-    await consultarUsuarios.destroy();
-
-    res.status(200).json({
-      message: `${consultarUsuarios.nombre} Ha sido eliminado`,
-    });
-  } catch (error) {
-    res.status(500).json(error.message);
-  }
-};
- */
