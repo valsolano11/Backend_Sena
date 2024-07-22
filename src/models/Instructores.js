@@ -16,6 +16,7 @@ const Instructores = conexion.define(
     nombre: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
       validate: {
         notEmpty: {
           msg: "No puedes dejar este campo vacio",
@@ -25,6 +26,17 @@ const Instructores = conexion.define(
     correo: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
+      validate: {
+        notEmpty: {
+          msg: "No puedes dejar este campo vacio",
+        },
+      },
+    },
+    celular: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      unique: true,
       validate: {
         notEmpty: {
           msg: "No puedes dejar este campo vacio",
@@ -35,6 +47,11 @@ const Instructores = conexion.define(
   {
     tableName: "Instructores",
     timestamps: true,
+    indexes: [
+      {
+        fields: ["nombre", "correo", "celular"],
+      },
+    ],
   }
 );
 Instructores.belongsTo(Estado, { foreignKey: "EstadoId"});

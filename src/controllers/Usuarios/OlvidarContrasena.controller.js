@@ -1,8 +1,8 @@
-import { enviarCorreo } from "../libs/nodemailer.js";
+import { enviarCorreo } from "../../libs/nodemailer.js";
 import bcrypt from "bcryptjs";
-import Usuario from "../models/Usuario.js";
-import { crearToken, verificarTokenRecupercion } from "../libs/token.js";
-import { generarCodigo, validarCorreo} from "../helpers/OlvidarContrasena.helpers.js";
+import Usuario from "../../models/Usuario.js";
+import { crearToken, verificarTokenRecupercion } from "../../libs/token.js";
+import { generarCodigo, validarCorreo} from "../../helpers/OlvidarContrasena.helpers.js";
 
 
 export const validarEmail = (email) => {

@@ -3,7 +3,7 @@
 import { Router } from "express";
 import validarSchemas from "../middlewares/ValidarSchemas.js";
 import { InstructoresSchemas } from "../schemas/Instructores.schemas.js"; 
-import { crearInstructor, getAllInstructores, getInstructor,actualizarInstructor } from "../controllers/Instructores.controller.js";
+import { crearInstructor, getAllInstructores, getInstructor,actualizarInstructor } from "../controllers/Formacion/Instructores.controller.js";
 import { rutaProtegida } from "../middlewares/ValidarToken.js";
 import {validarRolAdmin} from "../middlewares/ValidarRol.js"
 /* import { validacionTokenUsuario } from "../middlewares/Prueba.js";

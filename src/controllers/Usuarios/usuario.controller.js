@@ -1,5 +1,5 @@
-import Usuario from "../models/Usuario.js";
-import Rol from "../models/Rol.js";
+import Usuario from "../../models/Usuario.js";
+import Rol from "../../models/Rol.js";
 import bcrypt from "bcryptjs";
 import { config } from "dotenv";
 

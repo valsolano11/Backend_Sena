@@ -2,7 +2,6 @@ import { DataTypes } from "sequelize";
 import { conexion } from "../conexion.js";
 import Estado from "./Estados.js";
 import Usuario from "./Usuario.js";
-import Instructores from "./Instructores.js"; 
 
 
 const Fichas = conexion.define(
@@ -17,6 +16,7 @@ const Fichas = conexion.define(
     NumeroFicha: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
       validate: {
         notEmpty: {
           msg: "No puedes dejar este campo vacio",
@@ -26,6 +26,7 @@ const Fichas = conexion.define(
     Programa: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
       validate: {
         notEmpty: {
           msg: "No puedes dejar este campo vacio",
@@ -35,6 +36,7 @@ const Fichas = conexion.define(
     Jornada: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
       validate: {
         notEmpty: {
           msg: "No puedes dejar este campo vacio",
@@ -45,6 +47,11 @@ const Fichas = conexion.define(
   {
     tableName: "Fichas",
     timestamps: true,
+    indexes: [
+      {
+        fields: ["NumeroFicha", "Programa", "Jornada"],
+      },
+    ],
   }
 );
 

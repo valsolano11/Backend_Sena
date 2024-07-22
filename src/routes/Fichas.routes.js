@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { crearFicha, getAllFichas, getFicha, updateFicha  } from "../controllers/Fichas.controller.js";
+import { crearFicha, getAllFichas, getFicha, updateFicha  } from "../controllers/Formacion/Fichas.controller.js";
 import validarSchemas from "../middlewares/ValidarSchemas.js";
 import { FichaSchemas } from "../schemas/Fichas.schemas.js";
 import { rutaProtegida } from "../middlewares/ValidarToken.js";

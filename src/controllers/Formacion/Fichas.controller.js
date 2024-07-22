@@ -1,10 +1,11 @@
-import Estado from "../models/Estados.js";
-import Ficha from "../models/Fichas.js";
-import Usuario from "../models/Usuario.js";
+import { Op } from "sequelize";
+import Estado from "../../models/Estados.js";
+import Ficha from "../../models/Fichas.js";
+import Usuario from "../../models/Usuario.js";
 
 export const crearFicha = async (req, res) => {
   try {
-    const { UsuarioId, EstadoId, NumeroFicha } = req.body;
+    const { UsuarioId, EstadoId, NumeroFicha, Programa, Jornada } = req.body;
 
     const consultaId = await Ficha.findOne({ 
       where: {NumeroFicha}
@@ -23,7 +24,7 @@ export const crearFicha = async (req, res) => {
       return res.status(400).json({ message: "El estado especificado no existe" });
     }
 
-    const nuevaFicha = { NumeroFicha, EstadoId, UsuarioId,};
+    const nuevaFicha = { NumeroFicha, Programa, Jornada, EstadoId, UsuarioId,};
 
     const fichaCreada = await Ficha.create(nuevaFicha);
 
@@ -60,22 +61,30 @@ export const getFicha = async (req, res) => {
 
 export const updateFicha = async (req, res) => {
   try {
-    const { UsuarioId, EstadoId, NumeroFicha } = req.body;
+    const { id } = req.params;
+    const { UsuarioId, EstadoId, NumeroFicha, Programa, Jornada } = req.body;
 
-    const consultaId = await Ficha.findOne({ 
-      where: {
-        NumeroFicha
-      }
-    });
-    if (consultaId) {
-      return res.status(400).json({ message: "La ficha ya existe" });
-    }
-    const ficha = await Ficha.findByPk(req.params.id);
+    const ficha = await Ficha.findByPk(id);
     if (!ficha) {
-      return res.status(404).json({ message: "Ficha no encontrada" });
+      return res.status(404).json({ message: "No se encontró ninguna ficha" });
     }
 
-    if (!UsuarioId) {
+    if (NumeroFicha) {
+      const consultaId = await Ficha.findOne({
+        where: {
+          NumeroFicha,
+          id: { [Op.ne]: ficha.id }, 
+        },
+      });
+      if (consultaId) {
+        return res
+          .status(400)
+          .json({ message: "La ficha con el mismo NumeroFicha ya existe" });
+      }
+      ficha.NumeroFicha = NumeroFicha;
+    }
+
+    if (UsuarioId) {
       const consultaUsuario = await Usuario.findByPk(UsuarioId);
       if (!consultaUsuario) {
         return res.status(400).json({ message: "Usuario no encontrado" });
@@ -86,13 +95,18 @@ export const updateFicha = async (req, res) => {
     if (EstadoId) {
       const consultaEstado = await Estado.findByPk(EstadoId);
       if (!consultaEstado) {
-        return res.status(400).json({ message: "El estado especificado no existe" });
+        return res
+          .status(400)
+          .json({ message: "El estado especificado no existe" });
       }
       ficha.EstadoId = EstadoId;
     }
 
-    if (NumeroFicha) {
-      ficha.NumeroFicha = NumeroFicha;
+    if (Programa !== undefined) {
+      ficha.Programa = Programa;
+    }
+    if (Jornada !== undefined) {
+      ficha.Jornada = Jornada;
     }
 
     await ficha.save();

@@ -1,6 +1,6 @@
 // Esto ya esta funcional, no tocarlo.
 import { Router } from 'express'
-import {postCrearCodigo, postValidarCodigo, updatePassword,} from "../controllers/OlvidarContrasena.controller.js";
+import {postCrearCodigo, postValidarCodigo, updatePassword,} from "../controllers/Usuarios/OlvidarContrasena.controller.js";
  
 
 const recuperacionRouter = Router()
