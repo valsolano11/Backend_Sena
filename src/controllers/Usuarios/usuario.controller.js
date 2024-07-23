@@ -84,32 +84,37 @@ export const putUsuario = async (req, res) => {
         message: "Usuario no encontrado",
       });
     }
+
     let data = req.body;
 
-    if (data.correo) {
+    // Validación de correo
+    if (data.correo && data.correo !== consultaUsuario.correo) {
       const consultarcorreo = await Usuario.findOne({
         where: {
-          correo: req.body.correo,
+          correo: data.correo,
         },
       });
       if (consultarcorreo && consultarcorreo.id !== req.params.id) {
-        return res.status(404).json({
+        return res.status(400).json({
           message: "Correo utilizado por otro usuario",
         });
       }
     }
-    if (data.Documento) {
+
+    // Validación de documento
+    if (data.Documento && data.Documento !== consultaUsuario.Documento) {
       const consultaDocumento = await Usuario.findOne({
         where: {
-          Documento: req.body.Documento,
+          Documento: data.Documento,
         },
       });
       if (consultaDocumento && consultaDocumento.id !== req.params.id) {
-        return res.status(404).json({
+        return res.status(400).json({
           message: "El documento ya está en uso por otro usuario",
         });
       }
     }
+
     if (req.body.Documento === DOCUMENT_ADMIN) {
       delete data.id;
     }
@@ -120,18 +125,20 @@ export const putUsuario = async (req, res) => {
       delete data.EstadoId;
     }
 
-    if (req.body.RolId) {
-      const consultaRol = await Rol.findByPk(req.body.RolId);
+    if (data.RolId) {
+      const consultaRol = await Rol.findByPk(data.RolId);
       if (!consultaRol) {
         return res.status(404).json({
           message: "Rol no encontrado",
         });
       }
     }
+
     if (data.password) {
       const salt = bcrypt.genSaltSync(10);
       data.password = bcrypt.hashSync(data.password, salt);
     }
+
     await consultaUsuario.update(data);
 
     res.status(200).json({

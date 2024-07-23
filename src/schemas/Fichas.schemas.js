@@ -10,5 +10,10 @@ export const FichaSchemas = z.object({
   UsuarioId: z.number({
     required_error: "El usuario que va registrarlo es requerido",
   }),
- 
+  Programa: z.string({
+    required_error: "El programa es requerido",
+  }),
+  Jornada: z.string({
+    required_error: "La jornada es requerida",
+  }),
 });
