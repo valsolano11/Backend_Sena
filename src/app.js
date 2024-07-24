@@ -1,5 +1,4 @@
 //Solamente van las rutas, no agregar nada mas
-
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
@@ -14,8 +13,8 @@ import recuperacionRouter from "./routes/olvidarContrasena.routes.js";
 import EstadoRouter from "./routes/Estado.routes.js";
 import FichaRouter from"./routes/Fichas.routes.js";
 import InstructorRouter from "./routes/Instructores.routes.js";
-/* 
-import SubcategoriaRouter from "./routes/Subcategoria.routes.js"; */
+import CategoriaRouter from "./routes/Categoria.routes.js";
+import SubcategoriaRouter from "./routes/Subcategoria.routes.js";
 
 const app = express();
 
@@ -47,8 +46,8 @@ app.use(
     EstadoRouter, 
     FichaRouter, 
     InstructorRouter,
-    /* CategoriaRouter,
-    SubcategoriaRouter */
+    CategoriaRouter,
+    SubcategoriaRouter
 
 )
 

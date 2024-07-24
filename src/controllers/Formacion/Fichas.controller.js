@@ -37,7 +37,18 @@ export const crearFicha = async (req, res) => {
 
 export const getAllFichas = async (req, res) => {
   try {
-    let Fichas = await Ficha.findAll();
+    let Fichas = await Ficha.findAll({
+      attributes: null, 
+      include: [
+      {
+         model: Usuario, 
+        atributes:['nombre'] 
+      },
+      { 
+        model: Estado,
+        attributes: ['estadoName'],
+       }],
+    });
 
     res.status(200).json(Fichas);
   } catch (error) {

@@ -3,7 +3,9 @@ import Estado from "../models/Estados.js";
 // Se modifico esto
 export const getAllEstado = async (req, res) => {
   try {
-    const consultarEstado = await Estado.findAll();
+    const consultarEstado = await Estado.findAll({
+        atributes: null,
+    });
 
     res.status(200).json(consultarEstado);
   } catch (error) {

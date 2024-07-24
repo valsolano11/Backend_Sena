@@ -24,7 +24,9 @@ export const crearRol = async (req, res) => {
 
 export const getAllRol = async (req, res) => {
   try {
-    let roles = await Rol.findAll();
+    let roles = await Rol.findAll({
+        attributes: null,
+    });
 
     res.status(200).json(roles);
   } catch (error) {

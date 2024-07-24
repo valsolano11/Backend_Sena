@@ -44,7 +44,21 @@ export const crearInstructor = async (req, res) => {
 };
 export const getAllInstructores = async (req, res) => {
   try {
-    let instructores = await Instructor.findAll();
+    let instructores = await Instructor.findAll(
+      {
+        atributes: null,
+        include: [
+          {
+            model: Estado,
+            attributes: ['estadoName'],
+          },
+          {
+            model: Usuario,
+            attributes: ['nombre'],
+          },
+        ],
+      }
+    );
 
     res.status(200).json(instructores);
   } catch (error) {

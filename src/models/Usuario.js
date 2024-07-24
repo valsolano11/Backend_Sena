@@ -62,6 +62,7 @@ const Usuario = conexion.define(
     timestamps: true,
     indexes: [
       {
+        unique: true,
         fields: [
           "Documento",
           "nombre",

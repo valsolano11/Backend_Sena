@@ -52,7 +52,19 @@ export const crearUsuario = async (req, res) => {
 
 export const getAllUsuario = async (req, res) => {
   try {
-    const consultarUsuarios = await Usuario.findAll();
+    const consultarUsuarios = await Usuario.findAll({
+      attributes: null,  // Esto incluye todos los atributos del modelo Usuario
+      include: [
+        {
+          model: Rol,
+          attributes: ['rolName']  // Incluye solo el atributo que necesitas
+        },
+        {
+          model: Estado,
+          attributes: ['estadoName']  // Incluye solo el atributo que necesitas
+        }
+      ]
+    });
 
     res.status(200).json(consultarUsuarios);
   } catch (error) {
