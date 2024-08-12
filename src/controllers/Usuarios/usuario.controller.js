@@ -7,6 +7,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import parseExcel from "../../helpers/excel.js";
 import { config } from "dotenv";
+import fs from "fs"
 
 config();
 
