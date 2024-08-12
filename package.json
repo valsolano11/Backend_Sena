@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "backend_sena": "file:",
     "bcryptjs": "^2.4.3",
     "config": "^3.3.12",
     "cookie-parser": "^1.4.6",

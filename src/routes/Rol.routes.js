@@ -5,6 +5,7 @@ import { validarRolAdmin } from "../middlewares/ValidarRol.js";
 import validarSchemas from "../middlewares/ValidarSchemas.js";
 import { rolSchemas } from "../schemas/Rol.schemas.js";
 
+
 const rolRouter = Router();
 
 rolRouter.get("/roles", getAllRol);

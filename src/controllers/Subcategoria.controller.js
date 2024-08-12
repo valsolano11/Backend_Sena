@@ -26,7 +26,7 @@ export const crearSubcategoria   = async (req, res) =>{
 
         const consultaEstado = await Estado.findByPk(EstadoId);
         if (!consultaEstado) {
-          return res.status(400).json({ message: "El estado especificado no existe" });
+            return res.status(400).json({ message: "El estado especificado no existe" });
         }
 
         let data = req.body;
@@ -42,20 +42,24 @@ export const crearSubcategoria   = async (req, res) =>{
 
 export const getallSubcategoria   = async (req, res) =>{
     try {
-        let subactegorias = await Subcategoria.findAll({
+        let subcategorias = await Subcategoria.findAll({
             attributes: null,
             include: [
                 {
                     model: Categoria,
                     attributes: ['categoriaName']
+                },
+                {
+                    model: Estado,
+                    attributes: ['estadoName'] 
                 }
             ],
         });
 
-        res.status(200).json(subactegorias)
+        res.status(200).json(subcategorias)
     } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+        res.status(500).json({ message: error.message });
+    }
 };
 
 export const getSubcategoria   = async (req, res) =>{

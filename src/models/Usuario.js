@@ -99,14 +99,26 @@ const master = {
 const guardarMaster = async () => {
   try {
     await Usuario.sync();
+    console.log('Sincronización exitosa');
+
     const usuarios = await Usuario.findAll();
+    console.log('Usuarios encontrados:', usuarios);
+
     if (usuarios.length === 0) {
+      console.log('Creando usuario maestro');
+      
+      // Verificar valores del objeto master
+      console.log('Datos del master:', master);
+
       await Usuario.create(master);
+      console.log('Usuario maestro creado');
     }
   } catch (error) {
+    console.error('Error al guardar el usuario maestro:', error);
     throw new Error(error.message);
   }
 };
+
 setTimeout(() => {
   guardarMaster();
 }, 2500);

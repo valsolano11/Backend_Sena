@@ -1,12 +1,13 @@
 import Usuario from "../../models/Usuario.js";
-import Estado from "../../models/Estados.js";
 import Rol from "../../models/Rol.js";
+import Estado from "../../models/Estados.js";
 import bcrypt from "bcryptjs";
 import { config } from "dotenv";
+import { Op } from "sequelize";
 
 config();
 
-const { DOCUMENT_ADMIN } = process.env;
+const DOCUMENTO_ADMIN = process.env.DOCUMENTO_ADMIN;
 
 export const crearUsuario = async (req, res) => {
   try {
@@ -21,16 +22,16 @@ export const crearUsuario = async (req, res) => {
     }
 
     const consultaCorreo = await Usuario.findOne({
-      where: { 
-        correo: req.body.correo 
+      where: {
+        correo: req.body.correo,
       },
     });
     if (consultaCorreo) {
       return res.status(400).json({ message: "El correo ya existe" });
     }
     const consultaDocumento = await Usuario.findOne({
-      where: { 
-        Documento: req.body.Documento 
+      where: {
+        Documento: req.body.Documento,
       },
     });
     if (consultaDocumento) {
@@ -44,6 +45,7 @@ export const crearUsuario = async (req, res) => {
     const crearUser = await Usuario.create(data);
 
     const guardar = await crearUser.save();
+
     res.status(201).json(guardar);
   } catch (error) {
     console.error("Error al crear usuario:", error);
@@ -51,115 +53,120 @@ export const crearUsuario = async (req, res) => {
   }
 };
 
-export const getAllUsuario = async (req, res) => {
+
+export const getAllusuario = async (req, res) => {
   try {
-    const consultarUsuarios = await Usuario.findAll({
-      attributes: null,  // Esto incluye todos los atributos del modelo Usuario
+    const consultarusuario = await Usuario.findAll({
+      attributes: null, // O especifica los atributos que deseas seleccionar
       include: [
         {
           model: Rol,
-          attributes: ['rolName']  // Incluye solo el atributo que necesitas
+          attributes: ['rolName']
         },
         {
           model: Estado,
-          attributes: ['estadoName']  // Incluye solo el atributo que necesitas
+          attributes: ['estadoName']
         }
       ]
     });
-
-    res.status(200).json(consultarUsuarios);
+    res.status(200).json(consultarusuario);
   } catch (error) {
-    res.status(500).json(error.message);
+    res.status(500).json({ message: error.message });
   }
 };
 
 export const getUsuario = async (req, res) => {
   try {
-    const consultarUsuarios = await Usuario.findByPk(req.params.id);
-
-    if (!consultarUsuarios) {
+    const consultarusuario = await Usuario.findByPk(req.params.id, {
+      include: [
+        {
+          model: Rol,
+          attributes: ['rolName']
+        },
+        {
+          model: Estado,
+          attributes: ['estadoName']
+        }
+      ]
+    });
+    if (!consultarusuario) {
       return res.status(404).json({
         message: "Usuario no encontrado",
       });
     }
-
-    res.status(200).json(consultarUsuarios);
+    res.status(200).json(consultarusuario);
   } catch (error) {
-    res.status(500).json(error.message);
+    res.status(500).json({ message: error.message });
   }
 };
 
-export const putUsuario = async (req, res) => {
+export const Putusuario = async (req, res) => {
   try {
-    const consultaUsuario = await Usuario.findByPk(req.params.id);
-    if (!consultaUsuario) {
+    const { id } = req.params;
+    const body = req.body;
+
+    const consultarusuario = await Usuario.findByPk(id);
+    if (!consultarusuario) {
       return res.status(404).json({
         message: "Usuario no encontrado",
       });
     }
 
-    let data = req.body;
-
-    // Validación de correo
-    if (data.correo && data.correo !== consultaUsuario.correo) {
-      const consultarcorreo = await Usuario.findOne({
+    if (body.correo) {
+      const emailExists = await Usuario.findOne({
         where: {
-          correo: data.correo,
+          correo: body.correo,
+          id: { [Op.ne]: consultarusuario.id },
         },
       });
-      if (consultarcorreo && consultarcorreo.id !== req.params.id) {
+      if (emailExists) {
         return res.status(400).json({
-          message: "Correo utilizado por otro usuario",
+          message: "El email ya está en uso por otro usuario",
         });
       }
     }
 
-    // Validación de documento
-    if (data.Documento && data.Documento !== consultaUsuario.Documento) {
-      const consultaDocumento = await Usuario.findOne({
+    if (body.documento) {
+      const documentoExists = await Usuario.findOne({
         where: {
-          Documento: data.Documento,
+          Documento: body.documento,
+          id: { [Op.ne]: consultarusuario.id },
         },
       });
-      if (consultaDocumento && consultaDocumento.id !== req.params.id) {
+      if (documentoExists) {
         return res.status(400).json({
           message: "El documento ya está en uso por otro usuario",
         });
       }
     }
 
-    if (req.body.Documento === DOCUMENT_ADMIN) {
-      delete data.id;
-    }
-    if (req.params.id === DOCUMENT_ADMIN && req.body.RolId === 2) {
-      delete data.RolId;
-    }
-    if (req.params.id === DOCUMENT_ADMIN && data.EstadoId) {
-      delete data.EstadoId;
+    if (
+      consultarusuario.correo === DOCUMENTO_ADMIN &&
+      (body.RolId || body.EstadoId)
+    ) {
+      return res.status(403).json({
+        message: "No se puede cambiar el rol o el estado del admin principal",
+      });
     }
 
-    if (data.RolId) {
-      const consultaRol = await Rol.findByPk(data.RolId);
-      if (!consultaRol) {
-        return res.status(404).json({
-          message: "Rol no encontrado",
+    for (let key in body) {
+      if (body[key] === null) {
+        return res.status(400).json({
+          message: `El campo ${key} no puede ser nulo`,
         });
       }
     }
 
-    if (data.password) {
-      const salt = bcrypt.genSaltSync(10);
-      data.password = bcrypt.hashSync(data.password, salt);
-    }
+    await consultarusuario.update(body);
 
-    await consultaUsuario.update(data);
-
-    res.status(200).json({
-      ok: true,
-      message: "Usuario actualizado",
+    return res.status(200).json({
+      message: "Usuario actualizado correctamente",
+      usuario: consultarusuario,
     });
   } catch (error) {
-    console.error("Error al editar usuario:", error);
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({
+      message: "Error al actualizar el usuario",
+      error: error.message,
+    });
   }
 };

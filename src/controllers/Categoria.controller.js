@@ -33,15 +33,21 @@ export const crearCategoria = async (req, res) => {
 }
 
 export const getAllCategoria= async (req, res) => {
-    try {
-        let categorias = await Categoria.findAll({
-            atributes: null,
-        });
-
-        res.status(200).json(categorias);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+  try {
+      let categorias = await Categoria.findAll({
+          atributes: null,
+          include: [
+            {
+              model: Estado,
+              attributes: ['estadoName'] 
+            }
+          ]
+      });
+      
+      res.status(200).json(categorias);
+  } catch (error) {
+      res.status(500).json({ message: error.message});
+}
 }
 
 export const getCategoria = async (req, res) => {

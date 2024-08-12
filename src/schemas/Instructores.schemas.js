@@ -12,8 +12,5 @@ export const InstructoresSchemas = z.object({
   }),
   celular: z.number({
     required_error: "El número de celular del instructor es necesario",
-  }),
-  UsuarioId: z.number({
-    required_error: "El usuario que lo creo es requerido"
   })
 });

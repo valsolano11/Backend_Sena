@@ -26,7 +26,6 @@ const Fichas = conexion.define(
     Programa: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
       validate: {
         notEmpty: {
           msg: "No puedes dejar este campo vacio",
@@ -34,14 +33,18 @@ const Fichas = conexion.define(
       },
     },
     Jornada: {
-      type: DataTypes.STRING,
+      type: DataTypes.ENUM("MAÑANA", "TARDE", "NOCHE"),
       allowNull: false,
-      unique: true,
+      defaultValue: "MAÑANA",  // Usar valor correcto de la enumeración
       validate: {
-        notEmpty: {
-          msg: "No puedes dejar este campo vacio",
-        },
-      },
+          notEmpty: {
+              msg: "La condición de la ficha no puede estar vacía"
+          },
+          isIn: {
+              args: [["MAÑANA", "TARDE", "NOCHE"]],
+              msg: "La condición debe ser 'MAÑANA', 'TARDE' o 'NOCHE'"
+          }
+      }
     },
   },
   {
@@ -49,7 +52,7 @@ const Fichas = conexion.define(
     timestamps: true,
     indexes: [
       {
-        fields: ["NumeroFicha", "Programa", "Jornada"],
+        fields: ["NumeroFicha"],
       },
     ],
   }

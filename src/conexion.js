@@ -47,6 +47,7 @@ export const hacerConexion = async () => {
     });
     console.log(`<< Conexión exitosa a la base de datos`);
   } catch (err) {
+    console.error('Error al conectar a la base de datos:', err);
     throw new Error("Base de datos no conectada");
   }
 };

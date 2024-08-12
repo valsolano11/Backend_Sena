@@ -34,7 +34,7 @@ const Instructores = conexion.define(
       },
     },
     celular: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.BIGINT,
       allowNull: false,
       unique: true,
       validate: {

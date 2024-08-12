@@ -11,10 +11,15 @@ import rolRouter from "./routes/Rol.routes.js";
 import LoginRouter from "./routes/login.routes.js";
 import recuperacionRouter from "./routes/olvidarContrasena.routes.js";
 import EstadoRouter from "./routes/Estado.routes.js";
-import FichaRouter from"./routes/Fichas.routes.js";
+import FichaRouter from "./routes/Fichas.routes.js";
 import InstructorRouter from "./routes/Instructores.routes.js";
 import CategoriaRouter from "./routes/Categoria.routes.js";
 import SubcategoriaRouter from "./routes/Subcategoria.routes.js";
+import UnidadMedidaRouter from "./routes/UnidadesMedidas.routes.js";
+import ProductoRouter from "./routes/Productos.routes.js";
+import HerramientaRouter from "./routes/Herramientas.routes.js";
+import PedidoRouter from "./routes/Pedido.routes.js";
+import PrestamoRouter from "./routes/Prestamo.routes.js";
 
 const app = express();
 
@@ -47,7 +52,12 @@ app.use(
     FichaRouter, 
     InstructorRouter,
     CategoriaRouter,
-    SubcategoriaRouter
+    SubcategoriaRouter,
+    UnidadMedidaRouter,
+    ProductoRouter,
+    HerramientaRouter,
+    PrestamoRouter,
+    PedidoRouter
 
 )
 

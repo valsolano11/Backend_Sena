@@ -6,11 +6,12 @@ import { rutaProtegida } from "../middlewares/ValidarToken.js";
 import { validarRolAdmin } from "../middlewares/ValidarRol.js";
 
 
+
 const FichaRouter = Router()
 
 FichaRouter.get("/Fichas", rutaProtegida, getAllFichas);
-FichaRouter.get("/Fichas/:id", rutaProtegida, getFicha);
-FichaRouter.post("/Fichas",rutaProtegida,validarRolAdmin, validarSchemas(FichaSchemas), crearFicha);
-FichaRouter.put("/Fichas/:id", rutaProtegida, updateFicha); 
+FichaRouter.get("/Fichas/:id", rutaProtegida,  getFicha);
+FichaRouter.post("/Fichas",rutaProtegida,validarRolAdmin,validarSchemas(FichaSchemas), crearFicha);
+FichaRouter.put("/Fichas/:id", rutaProtegida,  updateFicha); 
 
 export default FichaRouter
