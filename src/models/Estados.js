@@ -36,7 +36,11 @@ const Estado = conexion.define(
 // Datos predefinidos para los estados
 const datosEstados = [
   { estadoName: "ACTIVO" },
-  { estadoName: "INACTIVO" }
+  { estadoName: "INACTIVO" },
+  { estadoName: "AGOTADO" },
+  { estadoName: "EN PROCESO" },
+  { estadoName: "PENDIENTE" },
+  { estadoName: "ENVIADO" }
 ];
 
 const guardarEstados = async () => {
