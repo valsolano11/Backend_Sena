@@ -2,6 +2,10 @@ import Usuario from "../../models/Usuario.js";
 import Estado from "../../models/Estados.js";
 import Rol from "../../models/Rol.js";
 import bcrypt from "bcryptjs";
+import ExcelFile from "../../models/Excel.js";
+import path from "path";
+import { fileURLToPath } from "url";
+import parseExcel from "../../helpers/excel.js";
 import { config } from "dotenv";
 
 config();
@@ -44,6 +48,7 @@ export const crearUsuario = async (req, res) => {
     const crearUser = await Usuario.create(data);
 
     const guardar = await crearUser.save();
+
     res.status(201).json(guardar);
   } catch (error) {
     console.error("Error al crear usuario:", error);
@@ -161,5 +166,61 @@ export const putUsuario = async (req, res) => {
   } catch (error) {
     console.error("Error al editar usuario:", error);
     res.status(500).json({ message: error.message });
+  }
+};
+export const createUser = async (userData) => {
+  return await Usuario.create(userData);
+};
+
+export const bulkCreateUsers = async (usersData) => {
+  try {
+    await Usuario.bulkCreate(usersData, {
+      updateOnDuplicate: ["correo", "Documento"],
+    });
+  } catch (error) {
+    throw new Error(
+      "Error al insertar usuarios en la base de datos: " + error.message
+    );
+  }
+};
+
+export const syncDatabase = async () => {
+  await ExcelFile.sync();
+  await Usuario.sync();
+};
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const uploadPath = path.join(__dirname, "../../upload");
+
+export const uploadUsers = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded." });
+    }
+
+    const filePath = path.join(uploadPath, req.file.filename);
+    console.log(`Archivo recibido: ${filePath}`);
+
+    const excelFile = await ExcelFile.create({ fileName: req.file.filename });
+
+    const usersData = parseExcel(filePath);
+
+    await bulkCreateUsers(usersData);
+
+    excelFile.status = "processed";
+    await excelFile.save();
+
+    fs.unlinkSync(filePath);
+
+    res
+      .status(201)
+      .json({ message: "Users uploaded and processed successfully." });
+  } catch (error) {
+    console.error("Error al procesar el archivo:", error.message);
+    res
+      .status(500)
+      .json({ message: "Error al procesar el archivo: " + error.message });
   }
 };
