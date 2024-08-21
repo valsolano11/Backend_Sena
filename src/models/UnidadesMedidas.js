@@ -1,11 +1,9 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes } from "sequelize";
 import { conexion } from "../conexion.js";
 import { defaultVariables } from '../variables.js';
 
-
-const UnidadMedida = conexion.define(
-    "UnidadMedida",
-    {
+const UnidadDeMedida = conexion.define(
+    'UnidadDeMedida', {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -40,24 +38,27 @@ const UnidadMedida = conexion.define(
             },
         },
         equivalencia: {
-            type: DataTypes.FLOAT,
-            allowNull: true,
+            type: DataTypes.STRING,
+            allowNull: false,
+            validate: {
+                notEmpty: {
+                    msg: "El nombre no puede estar vacío",
+                },
+            },
         },
-    },
-    {
-        tableName: "UnidadesMedida",
-        timestamps: true,
+    }, {
+        timestamps: false,
+        tableName: 'UnidadesMedidas',
     }
 );
-
 // Función para insertar unidades
 async function insertDefaultUnidadesMedida(data) {
     try {
-        await UnidadMedida.sync();
+        await UnidadDeMedida.sync();
         const respuesta = await UnidadMedida.findAll();
 
         if (respuesta.length === 0) {
-            await UnidadMedida.bulkCreate(data);
+            await UnidadDeMedida.bulkCreate(data);
         }
     } catch (error) {
         throw new Error(error.message);
@@ -67,5 +68,4 @@ async function insertDefaultUnidadesMedida(data) {
 insertDefaultUnidadesMedida(defaultVariables.insertarUnidades);
 
 
-
-export default UnidadMedida;
+export default UnidadDeMedida;

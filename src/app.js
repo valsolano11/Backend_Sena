@@ -6,7 +6,6 @@ import xlsx from "xlsx"
 import multer from "multer";
 import path from "path";
 import morgan from "morgan";
-import usuariosRouter from "./routes/usuario.routes.js";
 import rolRouter from "./routes/Rol.routes.js";
 import LoginRouter from "./routes/login.routes.js";
 import recuperacionRouter from "./routes/olvidarContrasena.routes.js";
@@ -20,6 +19,8 @@ import ProductoRouter from "./routes/Productos.routes.js";
 import HerramientaRouter from "./routes/Herramientas.routes.js";
 import PedidoRouter from "./routes/Pedido.routes.js";
 import PrestamoRouter from "./routes/Prestamo.routes.js";
+import excelRouter from "./routes/Excel.routes.js";
+import usuariosRouter from './routes/usuarios.routes.js';
 
 const app = express();
 
@@ -57,7 +58,8 @@ app.use(
     ProductoRouter,
     HerramientaRouter,
     PrestamoRouter,
-    PedidoRouter
+    PedidoRouter,
+    excelRouter
 
 )
 

@@ -4,6 +4,8 @@ import Usuario from "./Usuario.js";
 import Instructores from "./Instructores.js";
 import Fichas from "./Fichas.js";
 import Producto from "./Productos.js";
+import UnidadMedida from "./UnidadesMedidas.js";
+import Estado from "./Estados.js";
 
 const Pedido = conexion.define(
     "Pedido",
@@ -42,7 +44,9 @@ const Pedido = conexion.define(
 Pedido.belongsTo(Usuario, {foreignKey: "UsuarioId"});
 Pedido.belongsTo(Instructores, {foreignKey: "InstructorId"});
 Pedido.belongsTo(Fichas, {foreignKey: "fichaId"});
-Pedido.belongsTo(Producto, {foreignKey: "ProductoId"})
+Pedido.belongsTo(Producto, {foreignKey: "ProductoId"});
+Pedido.belongsTo(UnidadMedida,{foreignKey: "UnidadMedidaId"});
+Pedido.belongsTo(Estado, {foreignKey: "EstadoId"})
 
 
 // Hook para establecer el código antes de crear el pedido

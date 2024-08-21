@@ -32,32 +32,29 @@ const Estado = conexion.define(
     ],
   }
 );
-
 // Datos predefinidos para los estados
 const datosEstados = [
   { estadoName: "ACTIVO" },
   { estadoName: "INACTIVO" },
   { estadoName: "AGOTADO" },
-  { estadoName: "EN PROCESO" },
   { estadoName: "PENDIENTE" },
-  { estadoName: "ENVIADO" }
+  { estadoName: "EN PROCESO" },
+  { estadoName: "ENTREGADO" },
 ];
 
 const guardarEstados = async () => {
   try {
-    await Estado.sync({ alter: true }); // Usar 'alter' para ajustar la tabla si hay cambios
+    await Estado.sync();
     const estados = await Estado.findAll();
     if (estados.length === 0) {
       await Estado.bulkCreate(datosEstados);
     }
   } catch (error) {
-    console.error("Error al guardar estados:", error.message);
+    throw new Error(error.message);
   }
 };
-
 setTimeout(() => {
   guardarEstados();
-}, 500); // Ajustar el tiempo de espera a 500 ms
+}, 2500);
 
 export default Estado;
-

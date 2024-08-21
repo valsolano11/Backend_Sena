@@ -57,6 +57,78 @@ export const crearProductos = async (req, res) => {
     }
 };
 
+
+
+
+
+import { convertirValor } from '../helpers/conversion.helpers.js';
+
+
+export const crearProducto = async (req, res) => {
+    const { nombre, codigo, descripcion, cantidadContenedoresEntrada, volumenPorContenedor, UnidadDeMedidaId, estado, SubcategoriaId } = req.body;
+
+    try {
+        const volumenTotalActual = cantidadContenedoresEntrada * volumenPorContenedor;
+        const nuevoProducto = await Producto.create({
+            nombre,
+            codigo,
+            descripcion,
+            cantidadContenedoresEntrada,
+            cantidadContenedoresActual: cantidadContenedoresEntrada,
+            volumenPorContenedor,
+            volumenTotalActual,
+            UnidadDeMedidaId,
+            estado,
+            SubcategoriaId,
+        });
+
+        res.status(201).json(nuevoProducto);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 export const getAllProductos = async (req, res) => {
     try {
         let consultaProducto = await Producto.findAll({

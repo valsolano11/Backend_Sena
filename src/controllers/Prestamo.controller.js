@@ -5,7 +5,6 @@ import Fichas from "../models/Fichas.js";
 import Usuario from "../models/Usuario.js";
 import Estado from "../models/Estados.js";
 
-
 export const crearPrestamo = async (req, res) => {
     try {
         const { HerramientaId, UsuarioId, InstructorId, fichaId, observaciones, FechaDevolucion } = req.body;
@@ -30,7 +29,13 @@ export const crearPrestamo = async (req, res) => {
             return res.status(404).json({ error: 'Ficha no encontrada' });
         }
 
+        // Buscar el estado "PENDIENTE"
+        const estadoPendiente = await Estado.findOne({ where: { estadoName: 'PENDIENTE' } });
+        if (!estadoPendiente) {
+            return res.status(500).json({ error: 'Estado PENDIENTE no encontrado' });
+        }
 
+        // Crear el préstamo con el estado "PENDIENTE"
         const prestamo = await Prestamo.create({
             HerramientaId,
             UsuarioId,
@@ -39,9 +44,11 @@ export const crearPrestamo = async (req, res) => {
             observaciones,
             FechaPrestamo: new Date(),
             FechaDevolucion,
-            codigo: herramienta.codigo, 
+            EstadoId: estadoPendiente.id,  // Asignar el estado "PENDIENTE"
+            codigo: herramienta.codigo,
         });
 
+        // Cambiar el estado de la herramienta a "INACTIVO"
         const estadoInactivo = await Estado.findOne({ where: { estadoName: 'INACTIVO' } });
         if (!estadoInactivo) {
             return res.status(500).json({ error: 'Estado INACTIVO no encontrado' });
@@ -58,6 +65,7 @@ export const crearPrestamo = async (req, res) => {
 };
 
 
+
 export const getAllPrestamos = async (req, res) => {
     try {
         const prestamos = await Prestamo.findAll({
@@ -65,7 +73,8 @@ export const getAllPrestamos = async (req, res) => {
             include: [
                 { model: Usuario, attributes: ['nombre'] },
                 { model: Instructores, attributes: ['nombre'] },
-                { model: Fichas, attributes: ['fichaName'] },
+                { model: Fichas, attributes: ['NumeroFicha'] },
+                { model: Estado, attributes: ['estadoName'] },
                 { model: Herramienta, attributes: ['nombre', 'codigo'] }
             ]
         });
@@ -78,10 +87,12 @@ export const getAllPrestamos = async (req, res) => {
 export const getPrestamo = async (req, res) => {
     try {
         const prestamo = await Prestamo.findByPk(req.params.id, {
+            attributes: null,
             include: [
                 { model: Usuario, attributes: ['nombre'] },
                 { model: Instructores, attributes: ['nombre'] },
-                { model: Fichas, attributes: ['fichaName'] },
+                { model: Fichas, attributes: ['NumeroFicha'] },
+                { model: Estado, attributes: ['estadoName'] },
                 { model: Herramienta, attributes: ['nombre', 'codigo'] }
             ]
         });

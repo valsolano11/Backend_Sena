@@ -5,6 +5,7 @@ import Estado from "./Estados.js";
 import Subcategoria from "./Subcategoria.js";
 import UnidadMedida from "./UnidadesMedidas.js";
 
+
 const Producto = conexion.define(
     "Producto",
     {
@@ -74,7 +75,7 @@ const Producto = conexion.define(
 Producto.belongsTo(Usuario, {foreignKey: "UsuarioId"});
 Producto.belongsTo(Estado, {foreignKey: "EstadoId"});
 Producto.belongsTo(Subcategoria, {foreignKey: "SubcategoriaId"});
-Producto.belongsTo(UnidadMedida, {foreignKey: "UnidadMedidaId"});
+Producto.belongsTo(UnidadMedida, { foreignKey: 'unidadMedidaId' });
 
 export default Producto;
 

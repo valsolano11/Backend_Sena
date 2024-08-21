@@ -37,3 +37,8 @@ const Categoria = conexion.define(
 Categoria.belongsTo(Estado, { foreignKey: "EstadoId" });
 
 export default Categoria;
+
+
+// consumo controlado
+//consumo devolutivo
+//consumo ficha

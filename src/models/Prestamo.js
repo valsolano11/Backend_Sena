@@ -4,6 +4,7 @@ import Herramienta from "./Herramientas.js";
 import Usuario from "./Usuario.js";
 import Instructores from "./Instructores.js";
 import Fichas from "./Fichas.js";
+import Estado from "./Estados.js";
 
 const Prestamo = conexion.define(
     "Prestamo",
@@ -42,5 +43,6 @@ Prestamo.belongsTo(Usuario, { foreignKey: "UsuarioId" });
 Prestamo.belongsTo(Instructores, { foreignKey: "InstructorId" });
 Prestamo.belongsTo(Fichas, { foreignKey: "fichaId" });
 Prestamo.belongsTo(Herramienta, { foreignKey: "HerramientaId" });
+Prestamo.belongsTo(Estado, {foreignKey: "EstadoId"});
 
 export default Prestamo;

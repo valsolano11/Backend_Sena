@@ -1,13 +1,14 @@
 import { Op } from "sequelize";
 import Estado from "../../models/Estados.js";
-import Ficha from "../../models/Fichas.js";
 import Usuario from "../../models/Usuario.js";
+import Fichas from "../../models/Fichas.js";
+
 
 export const crearFicha = async (req, res) => {
   try {
     const { UsuarioId, EstadoId, NumeroFicha, Programa, Jornada } = req.body;
 
-    const consultaId = await Ficha.findOne({ 
+    const consultaId = await Fichas.findOne({ 
       where: {NumeroFicha}
     });
     if (consultaId) {
@@ -26,7 +27,7 @@ export const crearFicha = async (req, res) => {
 
     const nuevaFicha = { NumeroFicha, Programa, Jornada, EstadoId, UsuarioId,};
 
-    const fichaCreada = await Ficha.create(nuevaFicha);
+    const fichaCreada = await Fichas.create(nuevaFicha);
 
     res.status(200).json(fichaCreada);
   } catch (error) {
@@ -37,11 +38,11 @@ export const crearFicha = async (req, res) => {
 
 export const getAllFichas = async (req, res) => {
   try {
-    let Fichas = await Ficha.findAll({
+    let Ficha = await Fichas.findAll({
       attributes: null, 
       include: [
       {
-         model: Usuario, 
+        model: Usuario, 
         atributes:['nombre'] 
       },
       { 
@@ -50,7 +51,7 @@ export const getAllFichas = async (req, res) => {
        }],
     });
 
-    res.status(200).json(Fichas);
+    res.status(200).json(Ficha);
   } catch (error) {
     res.status(500).json(error);
   }
@@ -75,7 +76,7 @@ export const updateFicha = async (req, res) => {
     const { id } = req.params;
     const { UsuarioId, EstadoId, NumeroFicha, Programa, Jornada } = req.body;
 
-    const ficha = await Ficha.findByPk(id);
+    const ficha = await Fichas.findByPk(id);
     if (!ficha) {
       return res.status(404).json({ message: "No se encontró ninguna ficha" });
     }

@@ -21,8 +21,9 @@ export const crearSubcategoria   = async (req, res) =>{
 
         const consultacategoria = await Categoria.findByPk(CategoriaId);
         if (!consultacategoria) {
-            return res.status(400).json({ message: "El estado especificado no existe" });
+            return res.status(400).json({ message: "La categoría especificada no existe" });
         }
+
 
         const consultaEstado = await Estado.findByPk(EstadoId);
         if (!consultaEstado) {
