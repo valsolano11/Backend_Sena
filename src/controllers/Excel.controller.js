@@ -1,6 +1,5 @@
 
-
-import ExcelFile from "../models/Excel";
+import ExcelFile from "../models/Excel.js";
 
     
 export const getAllExcel = async (req, res) => {

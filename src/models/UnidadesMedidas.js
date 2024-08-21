@@ -42,7 +42,7 @@ const UnidadDeMedida = conexion.define(
             allowNull: false,
             validate: {
                 notEmpty: {
-                    msg: "El nombre no puede estar vacío",
+                    msg: "La equivalencia no puede estar vacía",
                 },
             },
         },
@@ -51,11 +51,12 @@ const UnidadDeMedida = conexion.define(
         tableName: 'UnidadesMedidas',
     }
 );
+
 // Función para insertar unidades
 async function insertDefaultUnidadesMedida(data) {
     try {
         await UnidadDeMedida.sync();
-        const respuesta = await UnidadMedida.findAll();
+        const respuesta = await UnidadDeMedida.findAll();
 
         if (respuesta.length === 0) {
             await UnidadDeMedida.bulkCreate(data);
@@ -66,6 +67,5 @@ async function insertDefaultUnidadesMedida(data) {
 };
 
 insertDefaultUnidadesMedida(defaultVariables.insertarUnidades);
-
 
 export default UnidadDeMedida;

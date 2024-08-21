@@ -1,20 +1,19 @@
-import { convertirUnidad } from '../helpers/conversion.helpers.js';
+import { manejarExtraccion } from '../helpers/conversion.helpers.js';
 import UnidadMedida from '../models/UnidadesMedidas.js';
 
-export const convertir = (req, res) => {
-    const { cantidad, unidadOrigen, unidadDestino } = req.body;
+export const convertir = async (req, res) => {
+    const { cantidad, fromUnitId, toUnitId, cantidadPotes, capacidadPorPote } = req.body;
 
     try {
-        const cantidadConvertida = convertirUnidad(cantidad, fromUnitId, toUnitId);
+        const resultado = await manejarExtraccion(cantidad, fromUnitId, toUnitId, cantidadPotes, capacidadPorPote);
         res.json({
-            mensaje: `Conversión exitosa de ${cantidad} ${fromUnitId} a ${toUnitId}`,
-            cantidadConvertida,
+            mensaje: `Conversión y extracción exitosa`,
+            ...resultado,
         });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
 };
-
 
 export const getAllUnits = async (req, res) => {
     try {

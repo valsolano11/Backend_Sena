@@ -20,10 +20,15 @@ const Pedido = conexion.define(
             type: DataTypes.INTEGER,
             allowNull: false,
         },
+        cantidadSolicitadaVolumen:{
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        
         cantidadEntregada:{
             type: DataTypes.INTEGER,
             allowNull: false,
-    
+
         },
         fechaPedido:{
             type: DataTypes.DATEONLY,

@@ -61,9 +61,6 @@ export const crearProductos = async (req, res) => {
 
 
 
-import { convertirValor } from '../helpers/conversion.helpers.js';
-
-
 export const crearProducto = async (req, res) => {
     const { nombre, codigo, descripcion, cantidadContenedoresEntrada, volumenPorContenedor, UnidadDeMedidaId, estado, SubcategoriaId } = req.body;
 

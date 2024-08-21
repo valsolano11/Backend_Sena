@@ -47,12 +47,30 @@ const Producto = conexion.define(
         cantidadEntrada: {
             type: DataTypes.INTEGER,
             allowNull: false,
+            validate: {
+                notEmpty: {
+                    msg: "La cantidad de entrada del producto no puede estar vacío"
+                },
+            },
         },
         cantidadSalida: {
             type: DataTypes.INTEGER,
             allowNull: false,
         },
         cantidadActual: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },  
+        volumen: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            validate: {
+                notEmpty: {
+                    msg: "El volumen del producto no puede estar vacío"
+                },
+            },
+        },  
+        volumenTotal: {
             type: DataTypes.INTEGER,
             allowNull: false,
         },  
@@ -75,7 +93,7 @@ const Producto = conexion.define(
 Producto.belongsTo(Usuario, {foreignKey: "UsuarioId"});
 Producto.belongsTo(Estado, {foreignKey: "EstadoId"});
 Producto.belongsTo(Subcategoria, {foreignKey: "SubcategoriaId"});
-Producto.belongsTo(UnidadMedida, { foreignKey: 'unidadMedidaId' });
+Producto.belongsTo(UnidadMedida, { foreignKey: 'UnidadMedidaId' });
 
 export default Producto;
 
