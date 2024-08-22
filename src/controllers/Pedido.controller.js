@@ -1,46 +1,65 @@
 import Pedido from "../models/Pedido.js";
 import Producto from "../models/Productos.js";
-import Instructores from "../models/Instructores.js";
-import Fichas from "../models/Fichas.js";
-import Usuario from "../models/Usuario.js";
+import UnidadMedida from "../models/UnidadesMedidas.js";
 import Estado from "../models/Estados.js";
-import convert from 'convert-units';
+import { manejarExtraccion } from '../helpers/conversion.helpers.js';  // Asegúrate de importar correctamente el helper
+
+
 
 export const crearPedido = async (req, res) => {
     try {
-        const { cantidadSolicitada, cantidadEntregada, UsuarioId, InstructorId, fichaId, ProductoId, toUnit, EstadoId } = req.body;
+        const { 
+            cantidadSolicitada, 
+            cantidadSolicitadaVolumen, 
+            cantidadEntregada, 
+            cantidadEntregadaVolumen, 
+            unidadMedidaSolicitadaId, 
+            unidadMedidaEntregadaId, 
+            fechaPedido, 
+            ProductoId, 
+            UsuarioId, 
+            InstructorId, 
+            fichaId, 
+            EstadoId 
+        } = req.body;
 
-        // Validación de campos...
+
         const producto = await Producto.findByPk(ProductoId);
         if (!producto) {
             return res.status(404).json({ error: 'Producto no encontrado' });
         }
 
+
         const unidadMedidaProducto = await UnidadMedida.findByPk(producto.UnidadMedidaId);
         if (!unidadMedidaProducto) {
             return res.status(404).json({ error: 'Unidad de medida del producto no encontrada' });
         }
-        const fromUnit = unidadMedidaProducto.nombre; 
 
-        // Si la unidad de destino es diferente de la unidad de origen, realiza la conversión.
-        const cantidadEntregadaConvertida = fromUnit === toUnit
-            ? cantidadEntregada
-            : convert(cantidadEntregada).from(fromUnit).to(toUnit);
 
-        const cantidadSolicitadaConvertida = fromUnit === toUnit
-            ? cantidadSolicitada
-            : convert(cantidadSolicitada).from(fromUnit).to(toUnit);
+        const resultadoExtraccion = await manejarExtraccion(
+            cantidadEntregada, 
+            unidadMedidaProducto.id, 
+            unidadMedidaEntregadaId, 
+            producto.cantidadActual, 
+            producto.capacidadPorPote
+        );
 
-        // Validación de cantidades...
-        const cantidadDisponible = producto.cantidadActual;
-        const cantidadAEntregar = Math.min(cantidadEntregadaConvertida, cantidadDisponible);
+
+        if (resultadoExtraccion.totalCantidadRestante == null) {
+            return res.status(400).json({ error: 'Error en la extracción. Revisa las unidades de medida.' });
+        }
+
 
         const pedido = await Pedido.create({
             ProductoId,
-            cantidadSolicitada: cantidadSolicitadaConvertida,
-            cantidadEntregada: cantidadAEntregar,
-            fechaPedido: new Date(),
-            codigo: producto.codigo,  
+            cantidadSolicitada,
+            cantidadSolicitadaVolumen,
+            cantidadEntregada,
+            cantidadEntregadaVolumen,
+            unidadMedidaSolicitadaId,
+            unidadMedidaEntregadaId,
+            fechaPedido,
+            codigo: producto.codigo,
             UsuarioId,
             InstructorId,
             fichaId,
@@ -48,9 +67,15 @@ export const crearPedido = async (req, res) => {
             UnidadMedidaId: producto.UnidadMedidaId
         });
 
-        // Actualizar el inventario del producto con la conversión
-        producto.cantidadSalida += cantidadAEntregar;
-        producto.cantidadActual -= cantidadAEntregar;
+
+        const cantidadActualizada = producto.cantidadActual - resultadoExtraccion.totalCantidadRestante;
+        if (cantidadActualizada < 0) {
+            return res.status(400).json({ error: 'No hay suficiente cantidad disponible para este pedido.' });
+        }
+        producto.cantidadSalida += cantidadEntregada;
+        producto.cantidadActual = cantidadActualizada;
+        producto.volumenTotal -= cantidadEntregadaVolumen;
+
 
         if (producto.cantidadActual <= 10) {
             const estadoAgotado = await Estado.findOne({ where: { estadoName: 'AGOTADO' } });
@@ -58,6 +83,7 @@ export const crearPedido = async (req, res) => {
                 producto.EstadoId = estadoAgotado.id;
             }
         }
+
 
         await producto.save();
 
@@ -67,75 +93,6 @@ export const crearPedido = async (req, res) => {
         res.status(500).json({ error: 'Error al crear el pedido' });
     }
 };
-
-
-
-
-
-export const crearPedidoejemplo = async (req, res) => {
-    const { productoId, cantidadSolicitada, unidadMedidaSolicitadaId, unidadMedidaEntregadaId } = req.body;
-
-    try {
-        // Obtener el producto y las unidades
-        const producto = await Producto.findByPk(productoId);
-        const unidadOrigen = await UnidadDeMedida.findByPk(producto.UnidadDeMedidaId);
-        const unidadDestino = await UnidadDeMedida.findByPk(unidadMedidaSolicitadaId);
-
-        // Convertir la cantidad solicitada a la unidad del producto
-        const cantidadSolicitadaEnUnidadProducto = convertirUnidad(cantidadSolicitada, unidadDestino.sigla, unidadOrigen.sigla);
-
-        if (producto.volumenTotalActual < cantidadSolicitadaEnUnidadProducto) {
-            return res.status(400).json({ error: 'No hay suficiente cantidad disponible en el inventario.' });
-        }
-
-        // Actualizar el volumen total actual y cantidad de contenedores
-        producto.volumenTotalActual -= cantidadSolicitadaEnUnidadProducto;
-        producto.cantidadContenedoresActual = Math.ceil(producto.volumenTotalActual / producto.volumenPorContenedor);
-
-        await producto.save();
-
-        // Crear el pedido
-        const nuevoPedido = await Pedido.create({
-            productoId,
-            codigoProducto: producto.codigo,
-            cantidadSolicitada,
-            unidadMedidaSolicitadaId,
-            cantidadEntregada: cantidadSolicitada,
-            unidadMedidaEntregadaId: unidadMedidaSolicitadaId,
-            cantidadContenedoresSolicitados: Math.ceil(cantidadSolicitadaEnUnidadProducto / producto.volumenPorContenedor),
-            cantidadContenedoresEntregados: Math.ceil(cantidadSolicitadaEnUnidadProducto / producto.volumenPorContenedor),
-            estado: 'completado',
-        });
-
-        res.status(201).json(nuevoPedido);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

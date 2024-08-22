@@ -54,15 +54,15 @@ const Producto = conexion.define(
             },
         },
         cantidadSalida: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.FLOAT,
             allowNull: false,
         },
         cantidadActual: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },  
+            type: DataTypes.FLOAT,
+            allowNull: false, 
+        },
         volumen: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.FLOAT,
             allowNull: false,
             validate: {
                 notEmpty: {
@@ -71,7 +71,7 @@ const Producto = conexion.define(
             },
         },  
         volumenTotal: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.FLOAT,
             allowNull: false,
         },  
         marca:{
@@ -96,4 +96,3 @@ Producto.belongsTo(Subcategoria, {foreignKey: "SubcategoriaId"});
 Producto.belongsTo(UnidadMedida, { foreignKey: 'UnidadMedidaId' });
 
 export default Producto;
-

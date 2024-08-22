@@ -7,39 +7,46 @@ import { Op } from "sequelize";
 
 export const crearProductos = async (req, res) => {
     try {
-        const {nombre, codigo, descripcion, cantidadEntrada ,marca ,UsuarioId ,EstadoId ,SubcategoriaId ,UnidadMedidaId } = req.body;
+        const { nombre, codigo, descripcion, cantidadEntrada, volumen, marca, UsuarioId, EstadoId, SubcategoriaId, UnidadMedidaId } = req.body;
+
 
         const consultaNombre = await Producto.findOne({ where: { [Op.or]: [{ nombre }] } });
         if (consultaNombre) {
-            return res.status(400).json({ error: 'El nombre  del producto ya existe' });
+            return res.status(400).json({ error: 'El nombre del producto ya existe' });
         }
 
         const consultaCodigo = await Producto.findOne({ where: { [Op.or]: [{ codigo }] } });
         if (consultaCodigo) {
-            return res.status(400).json({ error: 'El codigo  del producto ya existe' });
+            return res.status(400).json({ error: 'El código del producto ya existe' });
         }
+
 
         const consultaUsuario = await Usuario.findByPk(UsuarioId);
         if (!consultaUsuario) {
             return res.status(400).json({ message: "El usuario especificado no existe" });
         }
+        
         const consultaUnidad = await UnidadMedida.findByPk(UnidadMedidaId);
         if (!consultaUnidad) {
-            return res.status(400).json({ message: "La uunidad de medida especificada no existe" });
+            return res.status(400).json({ message: "La unidad de medida especificada no existe" });
         }
-        const consultaSubcategoira = await Subcategoria.findByPk(SubcategoriaId);
-        if (!consultaSubcategoira) {
-            return res.status(400).json({ message: "La subcategoria especificada no existe" });
+        
+        const consultaSubcategoria = await Subcategoria.findByPk(SubcategoriaId);
+        if (!consultaSubcategoria) {
+            return res.status(400).json({ message: "La subcategoría especificada no existe" });
         }
+        
         const consultaEstado = await Estado.findByPk(EstadoId);
         if (!consultaEstado) {
             return res.status(400).json({ message: "El estado especificado no existe" });
         }
 
+
         const cantidadSalida = 0;
         const cantidadActual = cantidadEntrada;
-        let estadoIdActual = EstadoId;
 
+
+        let estadoIdActual = EstadoId;
         if (cantidadActual === 0) {
             const estadoInactivo = await Estado.findOne({ where: { estadoName: 'INACTIVO' } });
             if (estadoInactivo) {
@@ -47,47 +54,31 @@ export const crearProductos = async (req, res) => {
             }
         }
 
+        const volumenTotal = cantidadActual * volumen;
+
+
         const producto = await Producto.create({
-            nombre, codigo, descripcion, cantidadEntrada, cantidadSalida, cantidadActual, marca, UsuarioId, UnidadMedidaId, SubcategoriaId,   EstadoId: estadoIdActual
+            nombre,
+            codigo,
+            descripcion,
+            cantidadEntrada,
+            cantidadSalida,
+            cantidadActual,
+            volumen,
+            volumenTotal,
+            marca,
+            UsuarioId,
+            UnidadMedidaId,
+            SubcategoriaId,
+            EstadoId: estadoIdActual
         });
-    res.status(201).json(producto);
+
+        res.status(201).json(producto);
     } catch (error) {
         console.error("Error al crear el producto", error);
         res.status(500).json({ message: error.message });
     }
 };
-
-
-
-
-
-export const crearProducto = async (req, res) => {
-    const { nombre, codigo, descripcion, cantidadContenedoresEntrada, volumenPorContenedor, UnidadDeMedidaId, estado, SubcategoriaId } = req.body;
-
-    try {
-        const volumenTotalActual = cantidadContenedoresEntrada * volumenPorContenedor;
-        const nuevoProducto = await Producto.create({
-            nombre,
-            codigo,
-            descripcion,
-            cantidadContenedoresEntrada,
-            cantidadContenedoresActual: cantidadContenedoresEntrada,
-            volumenPorContenedor,
-            volumenTotalActual,
-            UnidadDeMedidaId,
-            estado,
-            SubcategoriaId,
-        });
-
-        res.status(201).json(nuevoProducto);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-};
-
-
-
-
 
 
 

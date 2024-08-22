@@ -21,14 +21,32 @@ const Pedido = conexion.define(
             allowNull: false,
         },
         cantidadSolicitadaVolumen:{
-            type: DataTypes.INTEGER,
+            type: DataTypes.FLOAT, // Usar FLOAT para manejar volúmenes con decimales
             allowNull: false,
         },
-        
+        unidadMedidaSolicitadaId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: UnidadMedida,
+                key: 'id',
+            }
+        },
         cantidadEntregada:{
             type: DataTypes.INTEGER,
             allowNull: false,
-
+        },
+        cantidadEntregadaVolumen:{
+            type: DataTypes.FLOAT, // Usar FLOAT para manejar volúmenes con decimales
+            allowNull: false,
+        },
+        unidadMedidaEntregadaId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: UnidadMedida,
+                key: 'id',
+            }
         },
         fechaPedido:{
             type: DataTypes.DATEONLY,
@@ -44,15 +62,18 @@ const Pedido = conexion.define(
         tableName: "Pedidos",
         timestamps: true,
     }
-)
+);
 
+// Relaciones con otras tablas
 Pedido.belongsTo(Usuario, {foreignKey: "UsuarioId"});
 Pedido.belongsTo(Instructores, {foreignKey: "InstructorId"});
 Pedido.belongsTo(Fichas, {foreignKey: "fichaId"});
 Pedido.belongsTo(Producto, {foreignKey: "ProductoId"});
-Pedido.belongsTo(UnidadMedida,{foreignKey: "UnidadMedidaId"});
-Pedido.belongsTo(Estado, {foreignKey: "EstadoId"})
+Pedido.belongsTo(Estado, {foreignKey: "EstadoId"});
 
+// Relaciones específicas para las unidades de medida
+Pedido.belongsTo(UnidadMedida, {as: 'UnidadMedidaSolicitada', foreignKey: 'unidadMedidaSolicitadaId'});
+Pedido.belongsTo(UnidadMedida, {as: 'UnidadMedidaEntregada', foreignKey: 'unidadMedidaEntregadaId'});
 
 // Hook para establecer el código antes de crear el pedido
 Pedido.addHook('beforeCreate', async (pedido, options) => {

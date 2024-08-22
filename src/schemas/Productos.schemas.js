@@ -4,7 +4,7 @@ export const ProductoSchemas = z.object({
     nombre: z.string({
         required_error: "El nombre del producto es requeirdo"
     }),
-    codigo: z.number({
+    codigo: z.string({
         required_error: "El codigo del producto es requerido"
     }),
     descripcion: z.string({
