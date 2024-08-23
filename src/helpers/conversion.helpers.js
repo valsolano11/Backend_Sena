@@ -1,6 +1,7 @@
 import UnidadDeMedida from '../models/UnidadesMedidas.js';
 import convert from 'convert-units';
 
+
 async function encontrarUnidadPorId(id) {
     return await UnidadDeMedida.findByPk(id);
 }
@@ -36,7 +37,7 @@ export async function manejarExtraccion(cantidad, fromUnitId, toUnitId, cantidad
         const cantidadTotalRestanteEnDestino = convertirValor(cantidadRestanteTotal, unidadOrigen.sigla, unidadDestino.sigla);
 
         return {
-            mensaje: `Extracción de ${cantidad} ${unidadDestino.sigla} completada.`,
+            mensaje: `Extracción de ${cantidad} ${unidadDestino.nombre} completada.`,
             potesRestantes,
             cantidadRestanteEnPote: cantidadRestanteEnPoteEnDestino,
             totalCantidadRestante: cantidadTotalRestanteEnDestino
@@ -52,11 +53,31 @@ export async function manejarExtraccion(cantidad, fromUnitId, toUnitId, cantidad
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* 
+
 async function encontrarUnidadPorId(id) {
     return await UnidadDeMedida.findByPk(id);
 }
 
+// Función para convertir valores entre unidades
 function convertirValor(cantidad, fromUnitSigla, toUnitSigla) {
     try {
         return convert(cantidad)
@@ -68,7 +89,8 @@ function convertirValor(cantidad, fromUnitSigla, toUnitSigla) {
     }
 }
 
-export async function manejarExtraccion(cantidad, fromUnitId, toUnitId, cantidadPotes, capacidadPorPote) {
+// Función para manejar la extracción de unidades basado en volumen
+export async function manejarExtraccion(volumen, fromUnitId, toUnitId, volumenTotal) {
     try {
         const unidadOrigen = await encontrarUnidadPorId(fromUnitId);
         const unidadDestino = await encontrarUnidadPorId(toUnitId);
@@ -76,22 +98,19 @@ export async function manejarExtraccion(cantidad, fromUnitId, toUnitId, cantidad
         if (!unidadOrigen || !unidadDestino) {
             throw new Error('Una de las unidades no es válida');
         }
-        const cantidadConvertida = convertirValor(cantidad, unidadOrigen.sigla, unidadDestino.sigla);
-        const cantidadRestanteEnPote = capacidadPorPote - cantidadConvertida;
-        let potesRestantes = cantidadPotes;
-        if (cantidadRestanteEnPote < 0) {
-            potesRestantes -= 1;
-        }
-        const totalCantidadRestante = (potesRestantes - 1) * capacidadPorPote + Math.max(cantidadRestanteEnPote, 0);
+
+        // Convertir el volumen solicitado a la unidad de medida del producto
+        const volumenConvertido = convertirValor(volumen, unidadDestino.sigla, unidadOrigen.sigla);
+        const volumenRestanteTotal = volumenTotal - volumenConvertido;
+
         return {
-            mensaje: `Extracción de ${cantidad} ${unidadDestino.sigla} completada.`,
-            potesRestantes,
-            cantidadRestanteEnPote: cantidadRestanteEnPote > 0 ? cantidadRestanteEnPote : 0,
-            totalCantidadRestante
+            mensaje: `Extracción de ${volumen} ${unidadDestino.nombre} completada.`,
+            volumenRestanteTotal
         };
     } catch (error) {
         console.error(`Error en la extracción: ${error.message}`);
         throw error;
     }
 }
+
  */

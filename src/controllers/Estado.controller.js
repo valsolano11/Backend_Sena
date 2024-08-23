@@ -14,15 +14,23 @@ const obtenerEstadosPorTipo = async (tipoEntidad) => {
         });
         break;
       case "producto":
-      case "herramienta":
         estadosFiltrados = await Estado.findAll({
           where: { estadoName: ["AGOTADO", "ACTIVO", "INACTIVO"] },
         });
         break;
+        case "herramienta":
+        estadosFiltrados = await Estado.findAll({
+          where: { estadoName: ["EN USO", "ACTIVO", "INACTIVO"] },
+        });
+        break;
       case "pedido":
-      case "prestamo":
         estadosFiltrados = await Estado.findAll({
           where: { estadoName: ["PENDIENTE", "EN PROCESO", "ENTREGADO"] },
+        });
+        break;
+        case "prestamo":
+        estadosFiltrados = await Estado.findAll({
+          where: { estadoName: ["PENDIENTE", "EN PROCESO", "ENTREGADO", "DEVUELTO"] },
         });
         break;
       case "subcategoria":

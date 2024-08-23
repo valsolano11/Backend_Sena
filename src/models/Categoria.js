@@ -28,11 +28,34 @@ const Categoria = conexion.define(
     indexes: [
       {
         unique: true,
-        fields: ['categoriaName', 'EstadoId'],
+        fields: ['categoriaName'],
       },
     ],
   }
 );
+
+// Datos predefinidos para las categorias
+const datosCategoria = [
+  { categoriaName: "CONSUMO CONTROLADO",EstadoId: 1},
+  { categoriaName: "CONSUMO DEVOLUTIVO",EstadoId: 1 },
+  { categoriaName: "CONSUMO FICHA",EstadoId: 1 },
+];
+
+const guardarCAtegorias = async () => {
+  try {
+    await Categoria.sync();
+    const categorias = await Categoria.findAll();
+    if (categorias.length === 0) {
+      await Categoria.bulkCreate(datosCategoria);
+    }
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+setTimeout(() => {
+  guardarCAtegorias();
+}, 2500);
+
 
 Categoria.belongsTo(Estado, { foreignKey: "EstadoId" });
 

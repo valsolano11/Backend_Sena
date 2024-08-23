@@ -87,37 +87,109 @@ export const getHerramienta = async (req, res) =>{
     }
 };
 
-export const getHerramientasPorNombre = async (req, res) => {
-    const { nombre } = req.query;
 
-    if (!nombre) {
-        return res.status(400).json({ message: 'El nombre de la herramienta es requerido' });
-    }
 
+
+export const obtenerCodigosPorNombre = async (req, res) => {
     try {
-        let consultaHerramientas = await Herramienta.findAll({
+        const { nombre } = req.query; // Obtener el nombre de la consulta
+
+        if (!nombre) {
+            return res.status(400).json({ error: 'Se requiere el parámetro "nombre"' });
+        }
+
+        // Buscar herramientas que coincidan con el nombre dado y estén en estado activo
+        const herramientas = await Herramienta.findAll({
             where: {
                 nombre: {
-                    [Op.like]: `%${nombre}%` 
-                }
+                    [Op.iLike]: `%${nombre}%` // Búsqueda insensible a mayúsculas/minúsculas
+                },
+                estado: 'ACTIVO'
             },
-            attributes: null,
-            include: [
-                { model: Usuario, attributes: ['nombre'] },
-                { model: Subcategoria, attributes: ['subcategoriaName'] },
-                { model: Estado, attributes: ['estadoName'] },
-            ]
+            attributes: ['codigo']
         });
 
-        if (consultaHerramientas.length === 0) {
+        // Verificar si se encontraron herramientas
+        if (herramientas.length === 0) {
             return res.status(404).json({ message: 'No se encontraron herramientas con ese nombre' });
         }
 
-        res.status(200).json(consultaHerramientas);
+        // Extraer los códigos únicos
+        const codigos = herramientas.map(herramienta => herramienta.codigo);
+        const codigosUnicos = [...new Set(codigos)]; // Eliminar duplicados
+
+        res.status(200).json(codigosUnicos);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error("Error al obtener códigos de herramientas:", error);
+        res.status(500).json({ error: 'Error al obtener códigos de herramientas' });
     }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export const obtenerNombresHerramientas = async (req, res) => {
+    try {
+        const nombres = await Herramienta.findAll({
+            attributes: [
+                [Sequelize.literal('(SELECT DISTINCT "nombre" FROM "Herramientas" WHERE "estado" = \'ACTIVO\')'), 'nombre']
+            ],
+            where: {
+                estado: 'ACTIVO'
+            },
+            group: 'nombre'
+        });
+        
+        res.json(nombres.map(h => h.get('nombre')));
+    } catch (error) {
+        res.status(500).json({ error: 'Error al obtener nombres de herramientas' });
+    }
+};
+
+
+export const obtenerCodigosHerramientas = async (req, res) => {
+    try {
+        const { nombre } = req.query;
+
+        // Buscar las herramientas que coincidan con el nombre dado y estén en estado activo
+        const herramientas = await Herramienta.findAll({
+            attributes: [
+                [Sequelize.fn('DISTINCT', Sequelize.col('codigo')), 'codigo']
+            ],
+            where: {
+                nombre: {
+                    [Op.iLike]: `%${nombre}%` // Búsqueda insensible a mayúsculas/minúsculas
+                },
+                estado: 'ACTIVO'
+            },
+            raw: true // Obtener los resultados como objetos planos
+        });
+
+        // Extraer los códigos únicos
+        const codigos = herramientas.map(herramienta => herramienta.codigo);
+
+        res.status(200).json(codigos);
+    } catch (error) {
+        console.error("Error al obtener códigos de herramientas:", error);
+        res.status(500).json({ error: 'Error al obtener códigos de herramientas' });
+    }
+};
+
 
 export const putHerramienta = async (req, res) =>{
     try {

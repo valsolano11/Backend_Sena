@@ -7,13 +7,7 @@ import { Op } from "sequelize";
 
 export const crearProductos = async (req, res) => {
     try {
-        const { nombre, codigo, descripcion, cantidadEntrada, volumen, marca, UsuarioId, EstadoId, SubcategoriaId, UnidadMedidaId } = req.body;
-
-
-        const consultaNombre = await Producto.findOne({ where: { [Op.or]: [{ nombre }] } });
-        if (consultaNombre) {
-            return res.status(400).json({ error: 'El nombre del producto ya existe' });
-        }
+        const { codigo, descripcion, cantidadEntrada, volumen, marca, UsuarioId, EstadoId, SubcategoriaId, UnidadMedidaId } = req.body;
 
         const consultaCodigo = await Producto.findOne({ where: { [Op.or]: [{ codigo }] } });
         if (consultaCodigo) {
@@ -48,7 +42,7 @@ export const crearProductos = async (req, res) => {
 
         let estadoIdActual = EstadoId;
         if (cantidadActual === 0) {
-            const estadoInactivo = await Estado.findOne({ where: { estadoName: 'INACTIVO' } });
+            const estadoInactivo = await Estado.findOne({ where: { estadoName: 'AGOTADO' } });
             if (estadoInactivo) {
                 estadoIdActual = estadoInactivo.id;
             }
@@ -79,41 +73,6 @@ export const crearProductos = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

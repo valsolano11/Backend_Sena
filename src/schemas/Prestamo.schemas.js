@@ -2,9 +2,6 @@ import { z } from "zod";
 
 export const PrestamoSchema = z.object({
 
-    observaciones: z.string({
-        required_error: "La observacion de la herramienta es requerido",
-    }),
     HerramientaId: z.number({
         required_error: "El ID de la herramienta es requerido",
     }),

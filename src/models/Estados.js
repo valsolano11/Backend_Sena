@@ -39,7 +39,9 @@ const datosEstados = [
   { estadoName: "AGOTADO" },
   { estadoName: "PENDIENTE" },
   { estadoName: "EN PROCESO" },
+  { estadoName: "EN USO" },
   { estadoName: "ENTREGADO" },
+  { estadoName: "DEVUELTO" },
 ];
 
 const guardarEstados = async () => {

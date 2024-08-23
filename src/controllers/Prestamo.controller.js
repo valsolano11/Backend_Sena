@@ -1,3 +1,4 @@
+import moment from 'moment';
 import Prestamo from "../models/Prestamo.js";
 import Herramienta from "../models/Herramientas.js";
 import Instructores from "../models/Instructores.js";
@@ -7,11 +8,20 @@ import Estado from "../models/Estados.js";
 
 export const crearPrestamo = async (req, res) => {
     try {
-        const { HerramientaId, UsuarioId, InstructorId, fichaId, observaciones, FechaDevolucion } = req.body;
+        const { HerramientaId, UsuarioId, InstructorId, fichaId } = req.body;
 
         const herramienta = await Herramienta.findByPk(HerramientaId);
         if (!herramienta) {
             return res.status(404).json({ error: 'Herramienta no encontrada' });
+        }
+
+        const estadoACTIVO = await Estado.findOne({ where: { estadoName: 'ACTIVO' } });
+        if (!estadoACTIVO) {
+            return res.status(500).json({ error: 'Estado ACTIVO no encontrado' });
+        }
+
+        if (herramienta.EstadoId !== estadoACTIVO.id) {
+            return res.status(400).json({ error: 'La herramienta no está en bodega. Está EN USO' });
         }
 
         const usuario = await Usuario.findByPk(UsuarioId);
@@ -29,42 +39,45 @@ export const crearPrestamo = async (req, res) => {
             return res.status(404).json({ error: 'Ficha no encontrada' });
         }
 
-        // Buscar el estado "PENDIENTE"
-        const estadoPendiente = await Estado.findOne({ where: { estadoName: 'PENDIENTE' } });
-        if (!estadoPendiente) {
-            return res.status(500).json({ error: 'Estado PENDIENTE no encontrado' });
+        const estadoEntregado = await Estado.findOne({ where: { estadoName: 'ENTREGADO' } });
+        if (!estadoEntregado) {
+            return res.status(500).json({ error: 'Estado ENTREGADO no encontrado' });
         }
 
-        // Crear el préstamo con el estado "PENDIENTE"
         const prestamo = await Prestamo.create({
             HerramientaId,
             UsuarioId,
             InstructorId,
             fichaId,
-            observaciones,
             FechaPrestamo: new Date(),
-            FechaDevolucion,
-            EstadoId: estadoPendiente.id,  // Asignar el estado "PENDIENTE"
             codigo: herramienta.codigo,
+            EstadoId: estadoEntregado.id
         });
 
-        // Cambiar el estado de la herramienta a "INACTIVO"
-        const estadoInactivo = await Estado.findOne({ where: { estadoName: 'INACTIVO' } });
-        if (!estadoInactivo) {
-            return res.status(500).json({ error: 'Estado INACTIVO no encontrado' });
+        const estadoEnUsoActualizado = await Estado.findOne({ where: { estadoName: 'EN USO' } });
+        if (!estadoEnUsoActualizado) {
+            return res.status(500).json({ error: 'Estado EN USO no encontrado' });
         }
 
-        herramienta.EstadoId = estadoInactivo.id;
+        herramienta.EstadoId = estadoEnUsoActualizado.id;
         await herramienta.save();
 
-        res.status(201).json(prestamo);
+        res.status(201).json({
+            prestamo: {
+                ...prestamo.toJSON(),
+                FechaPrestamo: moment(prestamo.FechaPrestamo).format('YYYY-MM-DD HH:mmA'),
+                FechaDevolucion: prestamo.FechaDevolucion ? moment(prestamo.FechaDevolucion).format('YYYY-MM-DD HH:mmA') : null
+            },
+            herramienta: {
+                nombre: herramienta.nombre,
+                codigo: herramienta.codigo
+            }
+        });
     } catch (error) {
         console.error("Error al crear el préstamo", error);
         res.status(500).json({ error: 'Error al crear el préstamo' });
     }
 };
-
-
 
 export const getAllPrestamos = async (req, res) => {
     try {
@@ -78,7 +91,14 @@ export const getAllPrestamos = async (req, res) => {
                 { model: Herramienta, attributes: ['nombre', 'codigo'] }
             ]
         });
-        res.status(200).json(prestamos);
+
+        const prestamosFormateados = prestamos.map(prestamo => ({
+            ...prestamo.toJSON(),
+            FechaPrestamo: moment(prestamo.FechaPrestamo).format('YYYY-MM-DD HH:mmA'),
+            FechaDevolucion: prestamo.FechaDevolucion ? moment(prestamo.FechaDevolucion).format('YYYY-MM-DD HH:mmA') : null
+        }));
+
+        res.status(200).json(prestamosFormateados);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -98,20 +118,60 @@ export const getPrestamo = async (req, res) => {
         });
 
         if (!prestamo) {
-            return res.status(404).json({ message: 'Prestamo no encontrado' });
+            return res.status(404).json({ message: 'Préstamo no encontrado' });
         }
 
-        res.status(200).json(prestamo);
+        res.status(200).json({
+            ...prestamo.toJSON(),
+            FechaPrestamo: moment(prestamo.FechaPrestamo).format('YYYY-MM-DD HH:mmA'),
+            FechaDevolucion: prestamo.FechaDevolucion ? moment(prestamo.FechaDevolucion).format('YYYY-MM-DD HH:mmA') : null
+        });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
 
-
 export const putPrestamos = async (req, res) => {
     try {
-        
+        const { id } = req.params;
+        const { observaciones } = req.body;
+
+        const prestamo = await Prestamo.findByPk(id);
+        if (!prestamo) {
+            return res.status(404).json({ error: 'Préstamo no encontrado' });
+        }
+
+        prestamo.FechaDevolucion = new Date();
+        prestamo.observaciones = observaciones;
+
+        const estadoDEVUELTO = await Estado.findOne({ where: { estadoName: 'DEVUELTO' } });
+        if (!estadoDEVUELTO) {
+            return res.status(500).json({ error: 'Estado DEVUELTO no encontrado' });
+        }
+
+        prestamo.EstadoId = estadoDEVUELTO.id;
+        await prestamo.save();
+
+        const herramienta = await Herramienta.findByPk(prestamo.HerramientaId);
+        if (!herramienta) {
+            return res.status(404).json({ error: 'Herramienta no encontrada' });
+        }
+
+        const estadoACTIVO = await Estado.findOne({ where: { estadoName: 'ACTIVO' } });
+        if (!estadoACTIVO) {
+            return res.status(500).json({ error: 'Estado ACTIVO no encontrado' });
+        }
+
+        herramienta.EstadoId = estadoACTIVO.id;
+        await herramienta.save();
+
+        res.status(200).json({
+            ...prestamo.toJSON(),
+            FechaPrestamo: moment(prestamo.FechaPrestamo).format('YYYY-MM-DD HH:mmA'),
+            FechaDevolucion: prestamo.FechaDevolucion ? moment(prestamo.FechaDevolucion).format('YYYY-MM-DD HH:mmA') : null
+        });
     } catch (error) {
-        
+        console.error("Error al actualizar el préstamo", error);
+        res.status(500).json({ error: 'Error al actualizar el préstamo' });
     }
 };

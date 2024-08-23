@@ -30,19 +30,25 @@ const Rol = conexion.define(
 
 
 
-async function insertDefaultRoles(dataRoles) {
+const guardarRoles = async () => {
   try {
     await Rol.sync();
-    const respuesta = await Rol.findAll();
-
-    if (respuesta.length === 0) {
+    const roles = await Rol.findAll();
+    if (roles.length === 0) {
       await Rol.bulkCreate(dataRoles);
     }
   } catch (error) {
     throw new Error(error.message);
   }
 };
+setTimeout(() => {
+  guardarRoles();
+}, 2500);
 
-insertDefaultRoles(defaultVariables.roles);
+const dataRoles = [
+  {rolName: 'ADMIN'},
+  {rolName: 'USUARIO'},
+  {rolName: 'SUBADMINISTRADOR'},
+]
 
 export default Rol;

@@ -20,12 +20,12 @@ const Prestamo = conexion.define(
             allowNull: true,
         },
         FechaPrestamo: {
-            type: DataTypes.DATEONLY,
+            type: DataTypes.DATE,
             allowNull: false,
             defaultValue: DataTypes.NOW,
         },
         FechaDevolucion: {
-            type: DataTypes.DATEONLY,
+            type: DataTypes.DATE,
             allowNull: true,
         },
         codigo: {

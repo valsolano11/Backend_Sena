@@ -12,8 +12,8 @@ return new Promise(async(resolve, reject)=>{
           port: 587,
           secure: false, // true for 465, false for other ports
           auth: {
-            user: "josearmandoavendanosaucedo6@gmail.com", // tu correo electrónico
-            pass: "mikz cdom wrax qsdj", // tu contraseña
+            user: "inventariodelmobiliario@gmail.com", // tu correo electrónico
+            pass: "xieo yngh kruv rsta", // tu contraseña
           },
         };
 
@@ -22,7 +22,7 @@ return new Promise(async(resolve, reject)=>{
         
         //Aqui va el email donde va salir el mensaje y el que tiene la clave de seguridad activa
         const message = {
-          from: "josearmandoavendanosaucedo6@gmail.com",
+          from: "inventariodelmobiliario@gmail.com",
           to: email,
           subject,
           text,
@@ -38,8 +38,14 @@ return new Promise(async(resolve, reject)=>{
 }
 
 /* 
-# info Microsoft 
+# info google 
 
 EMAIL_USER = josearmandoavendanosaucedo6@gmail.com|
-EMAIL_PASS =mikz cdom wrax qsdj #codigo de seguridad de microsoft
+EMAIL_PASS = mikz cdom wrax qsdj #codigo de seguridad de google
+
+EMAIL_USER = inventariodelmobiliario@gmail.com
+EMAIL_PASS = xieo yngh kruv rsta
+
+
+ruta para genrar el codigo == https://support.google.com/mail/answer/185833?hl=es-419
 */

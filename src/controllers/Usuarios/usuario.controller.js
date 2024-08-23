@@ -8,6 +8,7 @@ import parseExcel from "../../helpers/excel.js";
 import Usuario from "../../models/Usuario.js";
 import Rol from "../../models/Rol.js";
 import ExcelFile from "../../models/Excel.js";
+import Estado from "../../models/Estados.js";
 
 
 config();
