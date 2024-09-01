@@ -77,6 +77,35 @@ export const getSubcategoria   = async (req, res) =>{
     }
 };
 
+export const getallSubcategoriaACTIVO = async (req, res) => {
+    try {
+        const estadoActivo = await Estado.findOne({
+            where: { estadoName: 'ACTIVO' }
+        });
+
+        if (!estadoActivo) {
+            return res.status(404).json({ message: "Estado 'ACTIVO' no encontrado" });
+        }
+        let subcategorias = await Subcategoria.findAll({
+            where: { EstadoId: estadoActivo.id },
+            include: [
+                {
+                    model: Categoria,
+                    attributes: ['categoriaName']
+                },
+                {
+                    model: Estado,
+                    attributes: ['estadoName']
+                }
+            ],
+        });
+
+        res.status(200).json(subcategorias);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 
 export const putSubcategoria = async (req, res) => {
     try {

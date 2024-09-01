@@ -41,7 +41,7 @@ const Prestamo = conexion.define(
 
 Prestamo.belongsTo(Usuario, { foreignKey: "UsuarioId" });
 Prestamo.belongsTo(Instructores, { foreignKey: "InstructorId" });
-Prestamo.belongsTo(Fichas, { foreignKey: "fichaId" });
+Prestamo.belongsTo(Fichas, { foreignKey: "FichaId" });
 Prestamo.belongsTo(Herramienta, { foreignKey: "HerramientaId" });
 Prestamo.belongsTo(Estado, {foreignKey: "EstadoId"});
 

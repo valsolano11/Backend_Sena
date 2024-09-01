@@ -15,12 +15,12 @@ const obtenerEstadosPorTipo = async (tipoEntidad) => {
         break;
       case "producto":
         estadosFiltrados = await Estado.findAll({
-          where: { estadoName: ["AGOTADO", "ACTIVO", "INACTIVO"] },
+          where: { estadoName: [/* "AGOTADO", */ "ACTIVO", "INACTIVO"] },
         });
         break;
         case "herramienta":
         estadosFiltrados = await Estado.findAll({
-          where: { estadoName: ["EN USO", "ACTIVO", "INACTIVO"] },
+          where: { estadoName: [/* "EN USO", */ "ACTIVO", "INACTIVO"] },
         });
         break;
       case "pedido":
@@ -38,6 +38,11 @@ const obtenerEstadosPorTipo = async (tipoEntidad) => {
           where: { estadoName: ["ACTIVO", "INACTIVO"] },
         });
         break;
+        case "categoria":
+          estadosFiltrados = await Estado.findAll({
+            where: { estadoName: ["ACTIVO", "INACTIVO"] },
+          });
+          break;
       default:
         estadosFiltrados = [];
     }
@@ -48,8 +53,18 @@ const obtenerEstadosPorTipo = async (tipoEntidad) => {
   }
 };
 
+export const getEstadosPorTipo = async (req, res) => {
+  const { tipoEntidad } = req.params;
+  try {
+    const estadosFiltrados = await obtenerEstadosPorTipo(tipoEntidad);
+    res.status(200).json(estadosFiltrados);
+  } catch (error) {
+    res.status(500).json(error.message);
+  }
+};
 
-// Obtener todos los estados (sin filtro)
+
+
 export const getAllEstado = async (req, res) => {
   try {
     const consultarEstado = await Estado.findAll();
@@ -59,7 +74,6 @@ export const getAllEstado = async (req, res) => {
   }
 };
 
-// Obtener un estado por ID
 export const getEstado = async (req, res) => {
   try {
     const consultarEstado = await Estado.findByPk(req.params.id);
@@ -76,13 +90,3 @@ export const getEstado = async (req, res) => {
   }
 };
 
-// Obtener estados filtrados por tipo de entidad
-export const getEstadosPorTipo = async (req, res) => {
-  const { tipoEntidad } = req.params;
-  try {
-    const estadosFiltrados = await obtenerEstadosPorTipo(tipoEntidad);
-    res.status(200).json(estadosFiltrados);
-  } catch (error) {
-    res.status(500).json(error.message);
-  }
-};

@@ -9,7 +9,7 @@ export const PrestamoSchema = z.object({
     InstructorId: z.number({
         required_error: "El ID del instructor es requerido",
     }),
-    fichaId: z.number({
+    FichaId: z.number({
         required_error: "El ID de la ficha es requerido",
     }),
     codigo: z.string({

@@ -7,7 +7,7 @@ import { Op } from "sequelize";
 
 export const crearProductos = async (req, res) => {
     try {
-        const { codigo, descripcion, cantidadEntrada, volumen, marca, UsuarioId, EstadoId, SubcategoriaId, UnidadMedidaId } = req.body;
+        const {nombre, codigo, descripcion, cantidadEntrada, volumen, marca, UsuarioId, EstadoId, SubcategoriaId, UnidadMedidaId } = req.body;
 
         const consultaCodigo = await Producto.findOne({ where: { [Op.or]: [{ codigo }] } });
         if (consultaCodigo) {
@@ -110,7 +110,7 @@ export const getProductos = async (req, res) => {
 export const putProductos = async (req, res) => {
     try {
         const { id } = req.params;
-        const { nombre, codigo, descripcion, cantidadEntrada, marca, UsuarioId, UnidadMedidaId, SubcategoriaId, EstadoId } = req.body;
+        const { nombre, descripcion, cantidadEntrada, volumen, marca, UsuarioId, UnidadMedidaId, SubcategoriaId, EstadoId } = req.body;
 
         const producto = await Producto.findByPk(id);
 
@@ -125,12 +125,6 @@ export const putProductos = async (req, res) => {
             }
         }
 
-        if (codigo && codigo !== producto.codigo) {
-            const existingProductoCodigo = await Producto.findOne({ where: { codigo } });
-            if (existingProductoCodigo) {
-                return res.status(400).json({ error: 'El código del producto ya existe' });
-            }
-        }
 
         if (descripcion && descripcion.trim() === '') {
             return res.status(400).json({ error: 'La descripción no puede estar vacía' });
@@ -171,7 +165,7 @@ export const putProductos = async (req, res) => {
         }
 
         producto.nombre = nombre !== undefined ? nombre : producto.nombre;
-        producto.codigo = codigo !== undefined ? codigo : producto.codigo;
+        producto.volumen = volumen !== undefined ? volumen : producto.volumen;
         producto.descripcion = descripcion !== undefined ? descripcion : producto.descripcion;
         producto.marca = marca !== undefined ? marca : producto.marca;
         producto.UsuarioId = UsuarioId !== undefined ? UsuarioId : producto.UsuarioId;
@@ -185,5 +179,33 @@ export const putProductos = async (req, res) => {
     } catch (error) {
         console.error("Error al actualizar el producto", error);
         res.status(500).json({ error: 'Error al actualizar el producto' });
+    }
+};
+
+export const actualizarCantidadEntrada = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { cantidadEntrada } = req.body;
+
+        const producto = await Producto.findByPk(id);
+
+        if (!producto) {
+            return res.status(404).json({ error: 'Producto no encontrado' });
+        }
+
+        if (cantidadEntrada === undefined || isNaN(cantidadEntrada) || cantidadEntrada < 0) {
+            return res.status(400).json({ error: 'La cantidad de entrada debe ser un número positivo' });
+        }
+
+        const nuevaCantidadActual = producto.cantidadActual + Number(cantidadEntrada);
+        producto.cantidadEntrada = Number(cantidadEntrada);
+        producto.cantidadActual = nuevaCantidadActual;
+        producto.cantidadSalida = 0;
+
+        await producto.save();
+        res.json(producto);
+    } catch (error) {
+        console.error("Error al actualizar la cantidad de entrada del producto", error);
+        res.status(500).json({ error: 'Error al actualizar la cantidad de entrada del producto' });
     }
 };

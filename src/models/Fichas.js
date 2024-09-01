@@ -35,7 +35,7 @@ const Fichas = conexion.define(
     Jornada: {
       type: DataTypes.ENUM("MAÑANA", "TARDE", "NOCHE"),
       allowNull: false,
-      defaultValue: "MAÑANA",  // Usar valor correcto de la enumeración
+      defaultValue: "MAÑANA",
       validate: {
           notEmpty: {
               msg: "La condición de la ficha no puede estar vacía"

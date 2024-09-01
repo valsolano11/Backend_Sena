@@ -14,7 +14,7 @@ const Categoria = conexion.define(
     categoriaName: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true, // Asegurando que los nombres de categorías sean únicos
+      unique: true, 
       validate: {
         notEmpty: {
           msg: "El nombre de la categoria no puede estar vacio",
@@ -34,7 +34,6 @@ const Categoria = conexion.define(
   }
 );
 
-// Datos predefinidos para las categorias
 const datosCategoria = [
   { categoriaName: "CONSUMO CONTROLADO",EstadoId: 1},
   { categoriaName: "CONSUMO DEVOLUTIVO",EstadoId: 1 },

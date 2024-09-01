@@ -98,14 +98,16 @@ export const actualizarInstructor = async (req, res) => {
         return res.status(400).json({ message: "El instructor con ese correo ya existe" });
       }
     }
-     if (celular) {
-       const consultacelular = await Instructores.findOne({
-         where: { celular: celular },
-       });
-       if (consultacelular) {
-         return res.status(400).json({ message: "El celular ya esta usado por otro usuario" });
-       }
-     }
+
+    if (celular && celular !== instructor.celular) {
+      const consultaCelular = await Instructor.findOne({
+        where: { celular, id: { [Op.ne]: id } },
+      });
+      if (consultaCelular) {
+        return res.status(400).json({ message: "El celular ya está usado por otro usuario" });
+      }
+    }
+
     if (UsuarioId) {
       const consultaUsuario = await Usuario.findByPk(UsuarioId);
       if (!consultaUsuario) {
@@ -127,7 +129,7 @@ export const actualizarInstructor = async (req, res) => {
     if (EstadoId) instructor.EstadoId = EstadoId;
     if (UsuarioId) instructor.UsuarioId = UsuarioId;
 
-    await instructor.update();
+    await instructor.save();
 
     res.status(200).json(instructor);
   } catch (error) {

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { crearUsuario, getAllusuario, getUsuario} from "../controllers/Usuarios/usuario.controller.js";
-import { validarRolAdmin } from "../middlewares/ValidarRol.js"; //Revisar este codigo
+import { validarRolAdmin } from "../middlewares/ValidarRol.js"; 
 import {rutaProtegida} from "../middlewares/ValidarToken.js";
 import { usuarioSchemas } from "../schemas/Usuario.schemas.js";
 import validarSchemas from "../middlewares/ValidarSchemas.js";

@@ -52,14 +52,6 @@ const permisos = [
 ]
 
 
-const roles = [
-    {'rolName': 'ADMIN'},
-    {'rolName': 'USUARIO'},
-    {'rolName': 'SUBADMINISTRADOR'},
-]
-
-
-
 
 export const defaultVariables ={
     permisos,

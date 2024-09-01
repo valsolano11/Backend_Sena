@@ -8,7 +8,7 @@ import Estado from "../models/Estados.js";
 
 export const crearPrestamo = async (req, res) => {
     try {
-        const { HerramientaId, UsuarioId, InstructorId, fichaId } = req.body;
+        const { HerramientaId, UsuarioId, InstructorId, FichaId } = req.body;
 
         const herramienta = await Herramienta.findByPk(HerramientaId);
         if (!herramienta) {
@@ -34,9 +34,17 @@ export const crearPrestamo = async (req, res) => {
             return res.status(404).json({ error: 'Instructor no encontrado' });
         }
 
-        const ficha = await Fichas.findByPk(fichaId);
+        if (instructor.EstadoId !== estadoACTIVO.id) {
+            return res.status(400).json({ error: 'El instructor no está en un estado ACTIVO' });
+        }
+
+        const ficha = await Fichas.findByPk(FichaId);
         if (!ficha) {
             return res.status(404).json({ error: 'Ficha no encontrada' });
+        }
+
+        if (ficha.EstadoId !== estadoACTIVO.id) {
+            return res.status(400).json({ error: 'La ficha no está en un estado ACTIVO' });
         }
 
         const estadoEntregado = await Estado.findOne({ where: { estadoName: 'ENTREGADO' } });
@@ -48,7 +56,7 @@ export const crearPrestamo = async (req, res) => {
             HerramientaId,
             UsuarioId,
             InstructorId,
-            fichaId,
+            FichaId,
             FechaPrestamo: new Date(),
             codigo: herramienta.codigo,
             EstadoId: estadoEntregado.id
@@ -79,6 +87,9 @@ export const crearPrestamo = async (req, res) => {
     }
 };
 
+
+
+
 export const getAllPrestamos = async (req, res) => {
     try {
         const prestamos = await Prestamo.findAll({
@@ -94,8 +105,8 @@ export const getAllPrestamos = async (req, res) => {
 
         const prestamosFormateados = prestamos.map(prestamo => ({
             ...prestamo.toJSON(),
-            FechaPrestamo: moment(prestamo.FechaPrestamo).format('YYYY-MM-DD HH:mmA'),
-            FechaDevolucion: prestamo.FechaDevolucion ? moment(prestamo.FechaDevolucion).format('YYYY-MM-DD HH:mmA') : null
+            FechaPrestamo: moment(prestamo.FechaPrestamo).format('HH:mmA DD-MM-YYYY'),
+            FechaDevolucion: prestamo.FechaDevolucion ? moment(prestamo.FechaDevolucion).format('HH:mmA DD-MM-YYYY') : null
         }));
 
         res.status(200).json(prestamosFormateados);
@@ -124,7 +135,7 @@ export const getPrestamo = async (req, res) => {
         res.status(200).json({
             ...prestamo.toJSON(),
             FechaPrestamo: moment(prestamo.FechaPrestamo).format('YYYY-MM-DD HH:mmA'),
-            FechaDevolucion: prestamo.FechaDevolucion ? moment(prestamo.FechaDevolucion).format('YYYY-MM-DD HH:mmA') : null
+            FechaDevolucion: prestamo.FechaDevolucion ? moment(prestamo.FechaDevolucion).format('HH:mmA DD-MM-YYYY') : null
         });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -167,11 +178,12 @@ export const putPrestamos = async (req, res) => {
 
         res.status(200).json({
             ...prestamo.toJSON(),
-            FechaPrestamo: moment(prestamo.FechaPrestamo).format('YYYY-MM-DD HH:mmA'),
-            FechaDevolucion: prestamo.FechaDevolucion ? moment(prestamo.FechaDevolucion).format('YYYY-MM-DD HH:mmA') : null
+            FechaPrestamo: moment(prestamo.FechaPrestamo).format('HH:mmA DD-MM-YYYY'),
+            FechaDevolucion: prestamo.FechaDevolucion ? moment(prestamo.FechaDevolucion).format('HH:mmA DD-MM-YYYY') : null
         });
     } catch (error) {
         console.error("Error al actualizar el préstamo", error);
         res.status(500).json({ error: 'Error al actualizar el préstamo' });
     }
 };
+

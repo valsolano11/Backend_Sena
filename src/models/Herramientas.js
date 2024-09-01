@@ -44,7 +44,7 @@ const Herramienta = conexion.define(
         condicion: {
             type: DataTypes.ENUM("Bueno", "Regular", "Malo"),
             allowNull: false,
-            defaultValue: "Bueno",  // Usar valor correcto de la enumeración
+            defaultValue: "Bueno",
             validate: {
                 notEmpty: {
                     msg: "La condición de la herramienta no puede estar vacía"

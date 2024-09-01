@@ -5,10 +5,9 @@ import Usuario from "../models/Usuario.js";
 import { Op } from "sequelize";
 
 
-export const crearHerramienta = async (req, res) =>{
+export const crearHerramienta = async (req, res) => {
     try {
         const { nombre, codigo, marca, condicion, observaciones, UsuarioId, EstadoId, SubcategoriaId } = req.body;
-
 
         const consultaCodigo = await Herramienta.findOne({ where: { codigo } });
         if (consultaCodigo) {
@@ -20,9 +19,15 @@ export const crearHerramienta = async (req, res) =>{
             return res.status(400).json({ message: "El usuario especificado no existe" });
         }
 
-        const consultaSubcategoria = await Subcategoria.findByPk(SubcategoriaId);
+        const consultaSubcategoria = await Subcategoria.findByPk(SubcategoriaId, {
+            include: [{ model: Estado, as: 'Estado' }]
+        });
         if (!consultaSubcategoria) {
             return res.status(400).json({ message: "La subcategoría especificada no existe" });
+        }
+
+        if (consultaSubcategoria.Estado.estadoName !== 'ACTIVO') {
+            return res.status(400).json({ error: 'La subcategoría no está en estado ACTIVO' });
         }
 
         let estadoId = EstadoId;
@@ -81,7 +86,7 @@ export const getHerramienta = async (req, res) =>{
         if(!consultaHerramieta){
             return res.status(404).json({ message: "Herramienta no encontrada" });
         }
-        res.status(200).json(consultaProducto)
+        res.status(200).json(consultaHerramieta)
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -92,31 +97,28 @@ export const getHerramienta = async (req, res) =>{
 
 export const obtenerCodigosPorNombre = async (req, res) => {
     try {
-        const { nombre } = req.query; // Obtener el nombre de la consulta
+        const { nombre } = req.query;
 
         if (!nombre) {
             return res.status(400).json({ error: 'Se requiere el parámetro "nombre"' });
         }
 
-        // Buscar herramientas que coincidan con el nombre dado y estén en estado activo
         const herramientas = await Herramienta.findAll({
             where: {
                 nombre: {
-                    [Op.iLike]: `%${nombre}%` // Búsqueda insensible a mayúsculas/minúsculas
+                    [Op.iLike]: `%${nombre}%` 
                 },
                 estado: 'ACTIVO'
             },
             attributes: ['codigo']
         });
 
-        // Verificar si se encontraron herramientas
         if (herramientas.length === 0) {
             return res.status(404).json({ message: 'No se encontraron herramientas con ese nombre' });
         }
 
-        // Extraer los códigos únicos
         const codigos = herramientas.map(herramienta => herramienta.codigo);
-        const codigosUnicos = [...new Set(codigos)]; // Eliminar duplicados
+        const codigosUnicos = [...new Set(codigos)]; 
 
         res.status(200).json(codigosUnicos);
     } catch (error) {
@@ -127,71 +129,7 @@ export const obtenerCodigosPorNombre = async (req, res) => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-export const obtenerNombresHerramientas = async (req, res) => {
-    try {
-        const nombres = await Herramienta.findAll({
-            attributes: [
-                [Sequelize.literal('(SELECT DISTINCT "nombre" FROM "Herramientas" WHERE "estado" = \'ACTIVO\')'), 'nombre']
-            ],
-            where: {
-                estado: 'ACTIVO'
-            },
-            group: 'nombre'
-        });
-        
-        res.json(nombres.map(h => h.get('nombre')));
-    } catch (error) {
-        res.status(500).json({ error: 'Error al obtener nombres de herramientas' });
-    }
-};
-
-
-export const obtenerCodigosHerramientas = async (req, res) => {
-    try {
-        const { nombre } = req.query;
-
-        // Buscar las herramientas que coincidan con el nombre dado y estén en estado activo
-        const herramientas = await Herramienta.findAll({
-            attributes: [
-                [Sequelize.fn('DISTINCT', Sequelize.col('codigo')), 'codigo']
-            ],
-            where: {
-                nombre: {
-                    [Op.iLike]: `%${nombre}%` // Búsqueda insensible a mayúsculas/minúsculas
-                },
-                estado: 'ACTIVO'
-            },
-            raw: true // Obtener los resultados como objetos planos
-        });
-
-        // Extraer los códigos únicos
-        const codigos = herramientas.map(herramienta => herramienta.codigo);
-
-        res.status(200).json(codigos);
-    } catch (error) {
-        console.error("Error al obtener códigos de herramientas:", error);
-        res.status(500).json({ error: 'Error al obtener códigos de herramientas' });
-    }
-};
-
-
-export const putHerramienta = async (req, res) =>{
+export const putHerramienta = async (req, res) => {
     try {
         const { id } = req.params;
         const { nombre, codigo, marca, condicion, observaciones, UsuarioId, EstadoId, SubcategoriaId } = req.body;
@@ -199,13 +137,6 @@ export const putHerramienta = async (req, res) =>{
         const herramienta = await Herramienta.findByPk(id);
         if (!herramienta) {
             return res.status(404).json({ message: "Herramienta no encontrada" });
-        }
-
-        if (nombre) {
-            const consultaNombre = await Herramienta.findOne({ where: { nombre, id: { [Op.ne]: id } } });
-            if (consultaNombre) {
-                return res.status(400).json({ error: 'El nombre de la herramienta ya existe' });
-            }
         }
 
         if (codigo) {
@@ -220,6 +151,20 @@ export const putHerramienta = async (req, res) =>{
             if (!consultaUsuario) {
                 return res.status(400).json({ message: "El usuario especificado no existe" });
             }
+        }
+
+        if (SubcategoriaId) {
+            const consultaSubcategoria = await Subcategoria.findByPk(SubcategoriaId, {
+                include: [{ model: Estado, as: 'Estado' }]
+            });
+            if (!consultaSubcategoria) {
+                return res.status(400).json({ message: "La subcategoría especificada no existe" });
+            }
+
+            if (consultaSubcategoria.Estado.estadoName !== 'ACTIVO') {
+                return res.status(400).json({ error: 'La subcategoría no está en estado ACTIVO' });
+            }
+            herramienta.SubcategoriaId = SubcategoriaId;
         }
 
         if (condicion === 'Malo') {
@@ -242,8 +187,6 @@ export const putHerramienta = async (req, res) =>{
         herramienta.condicion = condicion || herramienta.condicion;
         herramienta.observaciones = observaciones || herramienta.observaciones;
         herramienta.UsuarioId = UsuarioId || herramienta.UsuarioId;
-        herramienta.EstadoId = EstadoId || herramienta.EstadoId;
-        herramienta.SubcategoriaId = SubcategoriaId || herramienta.SubcategoriaId;
 
         await herramienta.save();
 

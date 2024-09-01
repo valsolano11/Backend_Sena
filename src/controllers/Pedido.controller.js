@@ -2,7 +2,7 @@ import Pedido from "../models/Pedido.js";
 import Producto from "../models/Productos.js";
 import UnidadMedida from "../models/UnidadesMedidas.js";
 import Estado from "../models/Estados.js";
-import { manejarExtraccion } from '../helpers/conversion.helpers.js';  // Asegúrate de importar correctamente el helper
+import { manejarExtraccion } from '../helpers/conversion.helpers.js'; 
 import Usuario from "../models/Usuario.js";
 import Instructores from "../models/Instructores.js";
 import Fichas from "../models/Fichas.js";

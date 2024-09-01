@@ -1,6 +1,5 @@
 import { DataTypes } from 'sequelize';
 import { conexion } from "../conexion.js";
-import { defaultVariables } from "../variables.js";
 
 const Rol = conexion.define(
     "Rol",

@@ -21,7 +21,7 @@ const Pedido = conexion.define(
             allowNull: false,
         },
         cantidadSolicitadaVolumen:{
-            type: DataTypes.FLOAT, // Usar FLOAT para manejar volúmenes con decimales
+            type: DataTypes.FLOAT,
             allowNull: false,
         },
         unidadMedidaSolicitadaId: {
@@ -37,7 +37,7 @@ const Pedido = conexion.define(
             allowNull: false,
         },
         cantidadEntregadaVolumen:{
-            type: DataTypes.FLOAT, // Usar FLOAT para manejar volúmenes con decimales
+            type: DataTypes.FLOAT, 
             allowNull: false,
         },
         unidadMedidaEntregadaId: {

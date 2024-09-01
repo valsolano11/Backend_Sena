@@ -3,16 +3,16 @@ import { z } from "zod";
 export const PedidoSchema = z.object({
     cantidadSolicitada: z.number({
         required_error: "La cantidad solicitada es requerida"
-    }).int(), // Debe ser un entero
+    }).int(), 
     cantidadSolicitadaVolumen: z.number({
         required_error: "El volumen solicitado es requerido"
-    }), // Puede ser un número entero o flotante
+    }), 
     cantidadEntregada: z.number({
         required_error: "La cantidad entregada es requerida"
-    }).int(), // Debe ser un entero
+    }).int(), 
     cantidadEntregadaVolumen: z.number({
         required_error: "El volumen entregado es requerido"
-    }), // Puede ser un número entero o flotante
+    }), 
     unidadMedidaSolicitadaId: z.number({
         required_error: "La unidad de medida solicitada es requerida"
     }),
@@ -21,7 +21,7 @@ export const PedidoSchema = z.object({
     }),
     fechaPedido: z.string({
         required_error: "La fecha del pedido es requerida"
-    }), // Podría necesitar más validación de formato de fecha
+    }), 
     ProductoId: z.number({
         required_error: "El producto es requerido"
     }),
