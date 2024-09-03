@@ -1,4 +1,4 @@
-/* import UnidadDeMedida from '../models/UnidadesMedidas.js';
+ import UnidadDeMedida from '../models/UnidadesMedidas.js';
 import convert from 'convert-units';
 
 
@@ -47,11 +47,6 @@ export async function manejarExtraccion(cantidad, fromUnitId, toUnitId, cantidad
         throw error;
     }
 }
-
- */
-
-
-
 
 
 
